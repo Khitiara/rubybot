@@ -1,0 +1,14 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    cinch (2.1.0)
+    googleajax (1.0.1)
+      json (>= 1.0.0)
+    json (1.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  cinch (~> 2.1.0)
+  googleajax
