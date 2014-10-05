@@ -5,6 +5,7 @@ GEM
     googleajax (1.0.1)
       json (>= 1.0.0)
     json (1.8.1)
+    rack (1.5.2)
 
 PLATFORMS
   ruby
@@ -12,3 +13,4 @@ PLATFORMS
 DEPENDENCIES
   cinch (~> 2.1.0)
   googleajax
+  rack (~> 1.1)
