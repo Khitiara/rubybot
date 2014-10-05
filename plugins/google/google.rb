@@ -1,7 +1,7 @@
 require 'googleajax'
 class Google
   include Cinch::Plugin
-  prefix '?'
+  set(:prefix => '?')
   match /g (.+)/, method: :search
   def search(m, query)
     GoogleAjax.referrer = 'cadwallion.com'
