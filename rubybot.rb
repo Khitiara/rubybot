@@ -13,7 +13,9 @@ bot = Cinch::Bot.new do
     c.sasl.username = 'ElrosGem'
     c.sasl.password = '127708'
     c.user = 'ElrosGem'
-    c.plugins.plugins = [Info, Sed, Google]
+    c.plugins.plugins = [Info,
+#      Sed, 
+      Google]
   end
 end
 
