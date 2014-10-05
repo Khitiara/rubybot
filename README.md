@@ -1,0 +1,4 @@
+rubybot
+=======
+
+Ruby IRC Bot
