@@ -10,12 +10,14 @@ bot = Cinch::Bot.new do
     c.server = 'irc.esper.net'
     c.channels = %w(#ElrosBot)
     c.nick = 'ElrosGem'
+    c.realname = 'ElrosGem'
     c.sasl.username = 'ElrosGem'
     c.sasl.password = '127708'
     c.user = 'ElrosGem'
-    c.plugins.plugins = [Info,
-#      Sed, 
-      Google]
+    c.plugins.plugins =
+        [Info,
+         Sed,
+         Google]
   end
 end
 

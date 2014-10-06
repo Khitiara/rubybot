@@ -6,6 +6,7 @@ GEM
       json (>= 1.0.0)
     json (1.8.1)
     rack (1.5.2)
+    revolver (1.1.1)
 
 PLATFORMS
   ruby
@@ -14,3 +15,4 @@ DEPENDENCIES
   cinch (~> 2.1.0)
   googleajax
   rack (~> 1.1)
+  revolver (~> 1.1.1)
