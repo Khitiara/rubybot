@@ -1,26 +1,16 @@
 # Rubybot
 
-TODO: Write a gem description
+The ninth iteration of the ElrosBot project.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'rubybot'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install rubybot
+Clone the repo
 
 ## Usage
 
-TODO: Write usage instructions here
+From within the project directory, run
+
+`bundle exec ruby rubybot.rb`
 
 ## Contributing
 
