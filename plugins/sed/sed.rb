@@ -25,7 +25,7 @@ class Sed
     regex = Regexp.new(matcher, conditional.include?('i'))
     if m.channel
       got = false
-      for msg in $logs.channel(m.channel).to_a
+      for msg in $logs.channel(m.channel).to_a.reverse
         if regex =~ msg[:message]
           out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
           m.reply("#{msg[:nick]}: #{out}")
@@ -36,7 +36,7 @@ class Sed
       m.reply("No match for '#{matcher}' in #{m.channel}!") unless got
     else
       got = false
-      for msg in $logs.user(m.user.nick).to_a
+      for msg in $logs.user(m.user.nick).to_a.reverse
         if regex =~ msg
           out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
           m.reply("#{m.user.nick}: #{out}")

@@ -36,3 +36,5 @@ build/
 rubybot.iml
 rubybot.ipr
 rubybot.iws
+
+config.json
