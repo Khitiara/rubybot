@@ -15,7 +15,7 @@ class Tweet
   def execute(m, uri)
     status = $twitter.status(URI(uri))
     text = status.full_text
-    user = status.source
-    m.reply "#{user}: #{text}"
+    user = status.user.screen_name
+    m.reply "@#{user}: #{text}"
   end
 end
