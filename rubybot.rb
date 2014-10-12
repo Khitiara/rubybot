@@ -1,14 +1,14 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'cinch'
-require_relative 'plugins/sed/sed'
-require_relative 'plugins/google/google'
-require_relative 'plugins/info/info'
-require_relative 'plugins/twitter/twitter'
 
 $cfg_file = File.read 'config.json'
 $config = JSON.parse($cfg_file)
 
+require_relative 'plugins/sed/sed'
+require_relative 'plugins/google/google'
+require_relative 'plugins/info/info'
+require_relative 'plugins/twitter/twitter'
 
 bot = Cinch::Bot.new do
   configure do |c|
