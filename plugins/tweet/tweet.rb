@@ -1,4 +1,4 @@
-require 'twitter'
+require 'tweet'
 
 $twitter = Twitter::REST::Client.new do |config|
   config.consumer_key = $config['twitter']['consumer_key']
@@ -7,7 +7,7 @@ $twitter = Twitter::REST::Client.new do |config|
   config.access_token_secret = $config['twitter']['access_secret']
 end
 
-class Twitter
+class Tweet
   include Cinch::Plugin
 
   listen_to :channel

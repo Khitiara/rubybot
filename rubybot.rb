@@ -9,7 +9,7 @@ $config = JSON.parse($cfg_file)
 require_relative 'plugins/sed/sed'
 require_relative 'plugins/google/google'
 require_relative 'plugins/info/info'
-require_relative 'plugins/twitter/twitter'
+require_relative 'plugins/tweet/tweet'
 
 bot = Cinch::Bot.new do
   configure do |c|
@@ -32,7 +32,7 @@ bot = Cinch::Bot.new do
         [Info,
          Sed,
          Google,
-         Twitter]
+         Tweet]
   end
 end
 
