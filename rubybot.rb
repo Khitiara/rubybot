@@ -6,6 +6,8 @@ require 'json'
 $cfg_file = File.read 'config.json'
 $config = JSON.parse($cfg_file)
 
+puts $config
+
 require_relative 'plugins/sed/sed'
 require_relative 'plugins/google/google'
 require_relative 'plugins/info/info'
