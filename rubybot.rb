@@ -4,14 +4,15 @@ require 'cinch'
 require_relative 'plugins/sed/sed'
 require_relative 'plugins/google/google'
 require_relative 'plugins/info/info'
+require_relative 'plugins/twitter/twitter'
 
-cfg_file = File.read 'config.json'
-config = JSON.parse(cfg_file)
+$cfg_file = File.read 'config.json'
+$config = JSON.parse($cfg_file)
 
 
 bot = Cinch::Bot.new do
   configure do |c|
-    config.each do |k, v|
+    $config['bot'].each do |k, v|
       segments = k.split('.')
       object = c
       segments.each do |s|
@@ -25,10 +26,12 @@ bot = Cinch::Bot.new do
         end
       end
     end
+    # noinspection RubyResolve
     c.plugins.plugins =
         [Info,
          Sed,
-         Google]
+         Google,
+         Twitter]
   end
 end
 
