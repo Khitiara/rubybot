@@ -10,7 +10,6 @@ end
 class Tweet
   include Cinch::Plugin
 
-  listen_to :channel
   match /.*(https:\/\/twitter.com\/[^\/]+\/status\/[^\/]+)/, :use_prefix => false
 
   def execute(m, uri)
