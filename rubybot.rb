@@ -42,6 +42,4 @@ $bot = Cinch::Bot.new do
   end
 end
 
-Thread.new {
-  $bot.start
-}
+$bot.start
