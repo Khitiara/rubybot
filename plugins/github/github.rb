@@ -1,4 +1,3 @@
-require 'sinatra'
 require 'gitio'
 
 post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do

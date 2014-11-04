@@ -2,6 +2,7 @@ require 'rubygems'
 require 'bundler/setup'
 require 'cinch'
 require 'json'
+require 'sinatra'
 
 $cfg_file = File.read 'config.json'
 $config = JSON.parse($cfg_file)
