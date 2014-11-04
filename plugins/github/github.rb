@@ -84,5 +84,6 @@ class Github
       else
         # No-OP
     end
+    204
   end
 end

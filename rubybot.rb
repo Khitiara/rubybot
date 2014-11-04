@@ -28,6 +28,10 @@ $bot = Cinch::Bot.new do
           object = c.send s
         end
       end
+      config.plugins.options[Cinch::HttpServer] = {
+          :host => '0.0.0.0',
+          :port => 4567
+      }
     end
     # noinspection RubyResolve
     c.plugins.plugins =
