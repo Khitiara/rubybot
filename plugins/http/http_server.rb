@@ -216,7 +216,7 @@ class Cinch::HttpServer
   listen_to :disconnect, :method => :stop_http_server
 
   def start_http_server(msg)
-    host    = config[:host]    || "localhost"
+    host    = config[:host]    || 'localhost'
     port    = config[:port]    || 1234
     logfile = config[:logfile] || :cinch
 
