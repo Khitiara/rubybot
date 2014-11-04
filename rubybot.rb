@@ -40,5 +40,3 @@ end
 Thread.new {
   $bot.start
 }
-
-run Sinatra::Application
