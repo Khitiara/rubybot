@@ -7,7 +7,7 @@ class Github
   require 'gitio'
 
   post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
-    payload_raw = body
+    payload_raw = body.read
     payload = JSON.parse(payload_raw, {:symbolize_names => true})
     event = env['X_Github_Event']
     case event
