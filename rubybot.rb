@@ -37,7 +37,8 @@ $bot = Cinch::Bot.new do
          Github,
          Cinch::HttpServer]
     c.plugins.options[Cinch::HttpServer] = {
-        host: '0.0.0.0'
+        host: '0.0.0.0',
+        port: 4567
     }
   end
 end
