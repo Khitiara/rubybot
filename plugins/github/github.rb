@@ -79,4 +79,3 @@ post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
   end
 end
 
-run Sinatra::Application

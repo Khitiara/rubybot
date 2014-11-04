@@ -37,4 +37,8 @@ $bot = Cinch::Bot.new do
   end
 end
 
-$bot.start
+Thread.new {
+  $bot.start
+}
+
+run Sinatra::Application
