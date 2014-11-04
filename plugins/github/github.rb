@@ -13,6 +13,7 @@ class Github
 
   post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
     payload = @request_payload
+    puts payload
     event = env['X_Github_Event']
     case event
       when 'pull_request'
