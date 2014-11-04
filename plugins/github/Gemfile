@@ -1,2 +1,0 @@
-gem 'sinatra'
-gem 'git.io', '~> 0.0.3'
