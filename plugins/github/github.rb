@@ -78,3 +78,5 @@ post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
       $bot.channels.each { |chan| chan.msg "[#{repo}]: #{user} commented on commit #{commit}: #{url}" }
   end
 end
+
+run Sinatra::Application
