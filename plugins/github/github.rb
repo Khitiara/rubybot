@@ -6,9 +6,13 @@ class Github
 
   require 'gitio'
 
+  before do
+    request.body.rewind
+    @request_payload = JSON.parse(request.body.read, {:symbolize_names => true})
+  end
+
   post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
-    payload_raw = body.read
-    payload = JSON.parse(payload_raw, {:symbolize_names => true})
+    payload = @request_payload
     event = env['X_Github_Event']
     case event
       when 'pull_request'

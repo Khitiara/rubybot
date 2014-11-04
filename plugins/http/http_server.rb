@@ -208,7 +208,7 @@ class Cinch::HttpServer
   # ::patch, and ::delete methods.
   module Verbs
     extend Forwardable
-    delegate [:get, :put, :post, :patch, :delete] => CinchHttpServer
+    delegate [:get, :put, :post, :patch, :delete, :before, :after] => CinchHttpServer
   end
 
   include Cinch::Plugin
