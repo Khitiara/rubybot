@@ -87,7 +87,7 @@ class Github
         repo = payload[:repository][:name]
         bot.channels.each { |chan| chan.msg "[#{repo}]: #{user} commented on commit #{commit}: #{url}" }
       else
-        # No-OP
+        bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
     end
     204
   end
