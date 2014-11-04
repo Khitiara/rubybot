@@ -36,7 +36,7 @@ $bot = Cinch::Bot.new do
          Google,
          Tweet,
          Github]
-    c.plugins.options[Cinch::HttpServer] = {
+    c.plugins.options[Github] = {
         :host => '0.0.0.0',
         :port => 4567
     }
