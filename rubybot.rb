@@ -10,8 +10,9 @@ require_relative 'plugins/sed/sed'
 require_relative 'plugins/google/google'
 require_relative 'plugins/info/info'
 require_relative 'plugins/tweet/tweet'
+require_relative 'plugins/github/github'
 
-bot = Cinch::Bot.new do
+$bot = Cinch::Bot.new do
   configure do |c|
     $config['bot'].each do |k, v|
       segments = k.split('.')
@@ -36,4 +37,4 @@ bot = Cinch::Bot.new do
   end
 end
 
-bot.start
+$bot.start
