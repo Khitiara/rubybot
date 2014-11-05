@@ -15,6 +15,7 @@ class Github
     payload = @request_payload
     puts payload
     event = env['X_Github_Event']
+    bot.channel_list.find('#ElrosBot').msg "Event: #{event}"
     case event
       when 'pull_request'
         issue = payload[:number]
@@ -87,7 +88,7 @@ class Github
         repo = payload[:repository][:name]
         bot.channels.each { |chan| chan.msg "[#{repo}]: #{user} commented on commit #{commit}: #{url}" }
       else
-        bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
+        #bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
     end
     204
   end
