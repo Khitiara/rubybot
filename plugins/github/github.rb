@@ -14,7 +14,7 @@ class Github
   post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
     payload = @request_payload
     puts payload
-    event = env['X-Github-Event']
+    event = request.env['X_Github_Event']
     bot.channel_list.find('#ElrosBot').msg "Event: #{event}"
     case event
       when 'pull_request'
