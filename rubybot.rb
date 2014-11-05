@@ -38,8 +38,7 @@ $bot = Cinch::Bot.new do
          Cinch::HttpServer]
     c.plugins.options[Cinch::HttpServer] = {
         host: '0.0.0.0',
-        port: 4567,
-        logfile: '/var/log/cinch-http-server.log'
+        port: 4567
     }
   end
 end
