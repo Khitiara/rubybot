@@ -19,3 +19,30 @@ From within the project directory, run
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
+## Example config file
+```json
+{
+  "bot": {
+    "server": "irc.esper.net",
+    "channels": [
+      "#example"
+    ],
+    "nick": "#######",
+    "realname": "#######",
+    "sasl.username": "######",
+    "sasl.password": "######",
+    "user": "ElrosGem"
+  },
+  "twitter": {
+    "consumer_key": "#######",
+    "consumer_secret": "########",
+    "access_key": "####-#######",
+    "access_secret": "########"
+  },
+  "github_repos": {
+    "user/repo": ["#example"]
+  }
+}
+}
+```
