@@ -1,1 +1,2 @@
 gem 'googleajax'
+gem 'sanitize'
