@@ -9,13 +9,13 @@ $formatter = lambda do |env|
   content = node.content
   case env[:node_name]
     when 'i'
-      out = Format(:italic, content)
+      node.replace Format(:italic, content)
     when 'b'
-      out = Format(:bold, content)
+      node.replace Format(:bold, content)
     else
-      out = content
+      # type code here
   end
-  node.replace out
+  Sanitize.node!(node, elements: %w(b i))
 end
 
 class Google
@@ -27,7 +27,7 @@ class Google
     GoogleAjax.referrer = 'cadwallion.com'
     result = GoogleAjax::Search.web(query)[:results][0]
     title = result[:title]
-    title = Sanitize.fragment(title, :elements => %w(b i), :transformers => [$formatter])
+    title = Sanitize.fragment(title, :transformers => [$formatter])
     m.reply "Result: #{title} - #{result[:url]}"
   end
 end
