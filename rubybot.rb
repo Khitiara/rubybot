@@ -8,7 +8,8 @@ $config = JSON.parse($cfg_file)
 
 require_relative 'plugins/sed/sed'
 require_relative 'plugins/google/google'
-require_relative 'plugins/info/info'
+# require_relative 'plugins/info/info'
+require_relative 'plugins/factoids/factoids'
 require_relative 'plugins/tweet/tweet'
 require_relative 'plugins/github/github'
 
@@ -30,7 +31,8 @@ $bot = Cinch::Bot.new do
     end
     # noinspection RubyResolve
     c.plugins.plugins =
-        [Info,
+        [Factoids,
+         # Info,
          Sed,
          Google,
          Tweet,
