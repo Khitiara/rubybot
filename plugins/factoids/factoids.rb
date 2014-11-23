@@ -1,9 +1,9 @@
 require 'json'
-require_relative 'macro_syntax_error'
+require_relative 'macro_semantic_error'
 
 $factoid_filename = 'factoids.json'
 
-file = File.read($factoid_filename)
+file = File.read($factoid_filename).force_encoding('UTF-8')
 $factoid_parse = JSON.parse(file)
 $reserved = $factoid_parse['reserved']
 $user = $factoid_parse['user']
@@ -32,19 +32,19 @@ module Macros
   @@macros = {
       urlencode: lambda do |_, args, _|
         unless args.length == 1
-          raise MacroSyntaxError.new('Urlencode macro takes exactly one argument!')
+          raise MacroSemanticError.new('Urlencode macro takes exactly one argument!')
         end
         CGI::escape args[0]
       end,
       list: lambda do |_, args, _|
         unless args.length == 0
-          raise MacroSyntaxError.new('List macro takes no arguments!')
+          raise MacroSemanticError.new('List macro takes no arguments!')
         end
         factoids.keys.join(', ')
       end,
       wget: lambda do |_, args, _|
         unless args.length == 2
-          raise MacroSyntaxError.new('Wget macro takes exactly two arguments!')
+          raise MacroSemanticError.new('Wget macro takes exactly two arguments!')
         end
         require 'net/http'
         line_delim_extractor = /lines:'(?<delim>[^']+)'/
@@ -63,13 +63,13 @@ module Macros
       end,
       arg: lambda do |msg_args, args, _|
         unless args.length == 1
-          raise MacroSyntaxError.new('Arg macro takes exactly one argument!')
+          raise MacroSemanticError.new('Arg macro takes exactly one argument!')
         end
         msg_args[Integer(args[0])]
       end,
       call: lambda do |_, args, nick|
         unless args.length >= 1
-          raise MacroSyntaxError.new('Arg macro takes at least one argument!')
+          raise MacroSemanticError.new('Arg macro takes at least one argument!')
         end
         name = args.shift
         Macros::process(factoids[name], nick, args.join(' ').scan($arg_regex).map {|it| it[0]})
@@ -132,8 +132,8 @@ class Factoids
         else
           msg.reply resp
         end
-      rescue MacroSyntaxError => e
-        msg.reply "#{msg.user}: Macro Syntax Error: #{e.msg}"
+      rescue MacroSemanticError => e
+        msg.reply "#{msg.user}: Macro Semantics Error: #{e.msg}"
       rescue Exception => e
         msg.reply e.message
         debug "#{e.message}\n#{e.backtrace.join('\n')}"

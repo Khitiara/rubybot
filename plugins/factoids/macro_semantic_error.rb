@@ -1,4 +1,4 @@
-class MacroSyntaxError < Exception
+class MacroSemanticError < Exception
   attr_accessor :msg
 
   def initialize(msg = '')
