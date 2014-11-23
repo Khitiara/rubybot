@@ -61,12 +61,6 @@ module Macros
           body
         end
       end,
-      arg: lambda do |msg_args, args, _|
-        unless args.length == 1
-          raise MacroSemanticError.new('Arg macro takes exactly one argument!')
-        end
-        msg_args[Integer(args[0])]
-      end,
       call: lambda do |_, args, nick|
         unless args.length >= 1
           raise MacroSemanticError.new('Arg macro takes at least one argument!')
@@ -88,6 +82,9 @@ module Macros
     end
     resp = resp.gsub /%me%/ do |_|
       nick
+    end
+    resp = resp.gsub /%a(\d+)%/ do |_|
+      args[$1]
     end
     resp.gsub @@macro_regex do |_|
           String name = $~['name']
