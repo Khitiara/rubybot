@@ -73,6 +73,12 @@ module Macros
         end
         name = args.shift
         Macros::process(factoids[name], nick, args.join(' ').scan($arg_regex).map {|it| it[0]})
+      end,
+      selrand: lambda do |_, args, _|
+        unless args.length >= 1
+          raise MacroSemanticError.new('selrand macro takes at least one argument!')
+        end
+        args[rand(args.length)]
       end
   }
 
@@ -80,14 +86,16 @@ module Macros
     resp = resp.gsub /%ioru%/ do |_|
       args[0] || nick
     end
-    resp = resp.gsub @@macro_regex do |_|
-      String name = $~['name']
-      macro_args_s = process($~['args'] || '', nick, args)
-      Array macro_args = macro_args_s.scan($arg_regex).map {|it| it[0]} || []
-      macro = @@macros[name.to_sym]
-      macro.call(args, macro_args, nick)
+    resp = resp.gsub /%me%/ do |_|
+      nick
     end
-    resp
+    resp.gsub @@macro_regex do |_|
+          String name = $~['name']
+          macro_args_s = process($~['args'] || '', nick, args)
+          Array macro_args = macro_args_s.scan($arg_regex).map {|it| it[0]} || []
+          macro = @@macros[name.to_sym]
+          macro.call(args, macro_args, nick)
+        end
   end
 
   module_function :process
