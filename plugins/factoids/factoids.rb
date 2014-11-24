@@ -84,7 +84,7 @@ module Macros
       nick
     end
     resp = resp.gsub /%a(\d+)%/ do |_|
-      args[$1]
+      args[Integer($1)]
     end
     resp.gsub @@macro_regex do |_|
           String name = $~['name']
