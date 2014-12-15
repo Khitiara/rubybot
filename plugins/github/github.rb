@@ -75,7 +75,7 @@ class Github
         title = payload[:issue][:title]
         repo = payload[:repository][:name]
         $channels[payload[:repository][:full_name]].map { |it|
-          bot.channel_list.find_ensured(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{user} commented on issue #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}" }
+          bot.channel_list.find_ensured(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} commented on issue #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}" }
 
       when 'create'
         name = payload[:ref]
