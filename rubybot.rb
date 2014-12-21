@@ -2,6 +2,10 @@ require 'rubygems'
 require 'bundler/setup'
 require 'cinch'
 require 'json'
+require 'timers'
+require 'active_support'
+
+$timers = Timers::Group.new
 
 $cfg_file = File.read 'config.json'
 $config = JSON.parse($cfg_file)
@@ -45,4 +49,9 @@ $bot = Cinch::Bot.new do
   end
 end
 
+fix_nick = $timers.every(1.hours) do
+  $bot.nick = $config['bot']['nick']
+end
+
 $bot.start
+fix_nick.cancel

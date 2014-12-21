@@ -1,6 +1,12 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    activesupport (4.1.6)
+      i18n (~> 0.6, >= 0.6.9)
+      json (~> 1.7, >= 1.7.7)
+      minitest (~> 5.1)
+      thread_safe (~> 0.1)
+      tzinfo (~> 1.1)
     addressable (2.3.6)
     buftok (0.2.0)
     cinch (2.1.0)
@@ -13,13 +19,16 @@ GEM
     git.io (0.0.3)
     googleajax (1.0.1)
       json (>= 1.0.0)
+    hitimes (1.2.2)
     http (0.6.2)
       http_parser.rb (~> 0.6.0)
     http_parser.rb (0.6.0)
+    i18n (0.7.0.beta1)
     json (1.8.1)
     memoizable (0.4.2)
       thread_safe (~> 0.3, >= 0.3.1)
     mini_portile (0.6.1)
+    minitest (5.4.1)
     multipart-post (2.0.0)
     naught (1.0.0)
     nokogiri (1.6.4.1)
@@ -45,6 +54,8 @@ GEM
       rack (~> 1.0)
     thread_safe (0.3.4)
     tilt (1.4.1)
+    timers (4.0.1)
+      hitimes
     twitter (5.11.0)
       addressable (~> 2.3)
       buftok (~> 0.2.0)
@@ -56,11 +67,14 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.2.0)
+    tzinfo (1.2.2)
+      thread_safe (~> 0.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   cinch (~> 2.1.0)
   git.io (~> 0.0.3)
   googleajax
@@ -69,4 +83,5 @@ DEPENDENCIES
   sanitize
   sinatra
   thin
+  timers (~> 4.0.1)
   twitter
