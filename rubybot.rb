@@ -3,7 +3,7 @@ require 'bundler/setup'
 require 'cinch'
 require 'json'
 require 'timers'
-require 'active_support'
+require 'active_support/time'
 
 $timers = Timers::Group.new
 
