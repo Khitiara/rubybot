@@ -99,7 +99,7 @@ class Github
         repo = payload[:repository][:name]
         url = Gitio::shorten payload[:forkee][:html_url]
         user = payload[:forkee][:owner][:login]
-        $channels[payload[:repository][:full_name]].map! { |it|
+        $channels[payload[:repository][:full_name]].map { |it|
           bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} forked the repo: #{url}" }
 
       when 'commit_comment'
