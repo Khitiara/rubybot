@@ -117,7 +117,7 @@ class Github
           url = payload[:target_url]
           desc = payload[:description]
           $channels[payload[:repository][:full_name]].map { |it|
-            bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}}" }
+            bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}" }
         end
       else
         #bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
