@@ -111,12 +111,14 @@ class Github
           bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} commented on commit #{Cinch::Formatting.format(:green, commit)}: #{url}" }
 
       when 'status'
-        repo = payload[:repository][:name]
-        url = payload[:target_url]
-        desc = payload[:description]
-        $channels[payload[:repository][:full_name]].map { |it|
-          bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}}" }
-
+        state = payload[:state]
+        unless state == 'pending'
+          repo = payload[:repository][:name]
+          url = payload[:target_url]
+          desc = payload[:description]
+          $channels[payload[:repository][:full_name]].map { |it|
+            bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}}" }
+        end
       else
         #bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
     end
