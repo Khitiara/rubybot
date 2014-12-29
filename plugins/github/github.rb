@@ -108,7 +108,15 @@ class Github
         user = payload[:comment][:user][:login]
         repo = payload[:repository][:name]
         $channels[payload[:repository][:full_name]].map { |it|
-          bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}: #{Cinch::Formatting.format(:orange, user)} commented on commit #{Cinch::Formatting.format(:green, commit)}: #{url}" }
+          bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} commented on commit #{Cinch::Formatting.format(:green, commit)}: #{url}" }
+
+      when 'status'
+        repo = payload[:repository][:name]
+        url = payload[:target_url]
+        desc = payload[:description]
+        $channels[payload[:repository][:full_name]].map { |it|
+          bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}}" }
+
       else
         #bot.channel_list.find('#ElrosBot').msg "unrecognized!: #{payload}"
     end
