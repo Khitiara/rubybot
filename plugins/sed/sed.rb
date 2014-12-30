@@ -4,7 +4,7 @@ class Sed
   include Cinch::Plugin
   listen_to :channel
   SED_REGEX = /^s\/(.+?)\/(.+?)(\/\S+|\/|$)/
-  match SED_REGEX, :use_prefix => false
+  match SED_REGEX, use_prefix: false
 
   def listen(m)
     unless m.message =~ SED_REGEX

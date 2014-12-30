@@ -16,6 +16,7 @@ require_relative 'plugins/google/google'
 require_relative 'plugins/factoids/factoids'
 require_relative 'plugins/tweet/tweet'
 require_relative 'plugins/github/github'
+require_relative 'plugins/pinglists/pinglists'
 
 $bot = Cinch::Bot.new do
   configure do |c|
@@ -41,6 +42,7 @@ $bot = Cinch::Bot.new do
          Google,
          Tweet,
          Github,
+         PingLists,
          Cinch::HttpServer]
     c.plugins.options[Cinch::HttpServer] = {
         host: '0.0.0.0',
