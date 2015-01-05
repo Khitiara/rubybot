@@ -20,15 +20,16 @@ class Github
     event = request.env['HTTP_X_GITHUB_EVENT']
     case event
       when 'pull_request'
-        issue = payload[:number]
         action = payload[:action]
-        repo = payload[:repository][:name]
-        title = payload[:pull_request][:title]
-        url = Gitio::shorten payload[:pull_request][:html_url]
-        user = payload[:sender][:login]
-        $channels[payload[:repository][:full_name]].map { |it|
-          bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{user} #{action} pull request #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}" }
-
+        unless /(un)?labeled/ =~ action
+          issue = payload[:number]
+          repo = payload[:repository][:name]
+          title = payload[:pull_request][:title]
+          url = Gitio::shorten payload[:pull_request][:html_url]
+          user = payload[:sender][:login]
+          $channels[payload[:repository][:full_name]].map { |it|
+            bot.channel_list.find(it) }.each { |chan| chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} #{action} pull request #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}" }
+        end
       when 'pull_request_review_comment'
         url = Gitio::shorten payload[:comment][:html_url]
         issue = payload[:pull_request][:number]
