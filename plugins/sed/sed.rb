@@ -1,5 +1,3 @@
-require_relative 'LogDB'
-$logs = Log_DB.new
 class Sed
   include Cinch::Plugin
   listen_to :channel
@@ -14,35 +12,35 @@ class Sed
   end
 
   def log_priv(nick, message)
-    $logs.user(nick) << message
+    bot.logs.user(nick) << message
   end
 
   def log_chan(channel, nick, message)
-    $logs.channel(channel) << { :nick => nick, :message => message }
+    bot.logs.channel(channel) << {:nick => nick, :message => message}
   end
 
   def execute(m, matcher, replacement, conditional)
     regex = Regexp.new(matcher, conditional.include?('i'))
     if m.channel
       got = false
-      for msg in $logs.channel(m.channel).to_a.reverse
+      bot.logs.channel(m.channel).to_a.reverse.each { |msg|
         if regex =~ msg[:message]
           out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
           m.reply("#{msg[:nick]}: #{out}")
           got = true
           break
         end
-      end
+      }
       m.reply("No match for '#{matcher}' in #{m.channel}!") unless got
     else
       got = false
-      for msg in $logs.user(m.user.nick).to_a.reverse
+      bot.logs.user(m.user.nick).to_a.reverse.each { |msg|
         if regex =~ msg
           out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
           m.reply("#{m.user.nick}: #{out}")
           got = true
         end
-      end
+      }
       m.reply("No match for '#{matcher}'!") unless got
     end
   end

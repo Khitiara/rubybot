@@ -1,16 +1,16 @@
 require 'googleajax'
 require 'sanitize'
+require File.dirname(__FILE__) + '/../factoids/factoids'
+require File.dirname(__FILE__) + '/../factoids/macro'
 
-class Google
-  include Cinch::Plugin
-  set(:prefix => '?')
-  match /g (.+)/, method: :search
-
-  def search(m, query)
-    GoogleAjax.referrer = 'cadwallion.com'
-    result = GoogleAjax::Search.web(query)[:results][0]
-    title = result[:title]
-    title = Sanitize.fragment(title)
-    m.reply "Result: #{title} - #{result[:url]}"
+class Google < Macro
+  # noinspection RubyResolve
+  def run(_, _, args, _, _)
+    GoogleAjax.referrer = 'robotbrain.info'
+    result              = GoogleAjax::Search.web(args)[:results][0]
+    title               = result[:title]
+    title               = Sanitize.fragment(title)
+    "Result: #{title} - #{result[:url]}"
   end
 end
+Macros.register Google

@@ -30,7 +30,7 @@ class PingLists
       end
 
       $pinglists[list] << msg.user.nick
-    elsif chan.opped? msg.user or chan.half_opped? msg.user or chan.voiced? msg.user or msg.user.name == $config['owner']
+    elsif @bot.acl.authed? msg.user, 1
       unless $pinglists[list]
         $pinglists[list] = [];
       end
@@ -53,7 +53,7 @@ class PingLists
 
     return if $pinglists[list].empty?
 
-    return unless chan.opped? msg.user or chan.half_opped? msg.user or chan.voiced? msg.user or msg.user.name == $config['owner']
+    return unless @bot.acl.auth_or_fail chan, msg.user, 2, "#{msg.user.nick} is not allowed to ping lists!"
 
     first = $pinglists[list].join ', '
 
@@ -70,7 +70,7 @@ class PingLists
       end
 
       $pinglists[list].delete msg.user.nick
-    elsif chan.opped? msg.user or chan.half_opped? msg.user or chan.voiced? msg.user or msg.user.name == $config['owner']
+    elsif @bot.acl.authed? msg.user, 1
       unless $pinglists[list]
         $pinglists[list] = [];
       end
@@ -93,7 +93,7 @@ class PingLists
 
     return if $pinglists[list].empty?
 
-    return unless chan.opped? msg.user or chan.half_opped? msg.user or chan.voiced? msg.user or msg.user.name == $config['owner']
+    return unless @bot.acl.auth_or_fail chan, msg.user, 2, "#{msg.user.nick} is not allowed to ping lists!"
 
     first = $pinglists[list].join ', '
 
