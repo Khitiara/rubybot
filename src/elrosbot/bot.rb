@@ -3,6 +3,7 @@ require File.dirname(__FILE__) + '/LogDB'
 require 'timers'
 require 'active_support/time'
 require 'cinch'
+require 'yajl'
 
 module ElrosBot
   class Bot < Cinch::Bot
@@ -14,7 +15,7 @@ module ElrosBot
     def initialize(data)
       super() do
         @cfg_file   = File.read data[:cfg_filename]
-        @bot_config = JSON.parse(@cfg_file)
+        @bot_config = Yajl::Parser.parse(@cfg_file)
         @owner      = @bot_config['owner']
         @acl        = ElrosBot::Acl.new(self)
         @timers     = Timers::Group.new

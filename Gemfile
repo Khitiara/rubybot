@@ -5,6 +5,7 @@ gem 'rack', '~>1.1'
 gem 'timers', '~>4.0.1'
 gem 'activesupport'
 gem 'revolver', '~> 1.1.1'
+gem 'yajl-ruby'
 
 Dir['plugins/**/Gemfile'].each do |gemfile|
   self.send(:eval, File.open(gemfile, 'r').read)
