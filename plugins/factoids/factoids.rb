@@ -118,6 +118,10 @@ module Macros
   def register(clazz)
     @@macros[clazz.name.downcase] = clazz.new
   end
+
+  def macro_alias(n, a)
+    @@macros[a] = @@macros[n]
+  end
 end
 
 $factoid_command = /([a-zA-Z]+)([^>]*)(?:\s*>\s*((?:[a-zA-Z]+)(?:[^>]*)))?/

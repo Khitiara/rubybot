@@ -14,3 +14,4 @@ class Google < Macro
   end
 end
 Macros.register Google
+Macros.macro_alias 'google', 'g'
