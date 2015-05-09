@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/plugin'
 class BotAdmin
   include ElrosBot::Plugin
+  include Cinch::Plugin
 
   set(:prefix => '.')
   match /admin:([a-z]+)(.+)?/
