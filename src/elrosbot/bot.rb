@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/acl'
 require File.dirname(__FILE__) + '/LogDB'
+require File.dirname(__FILE__) + '/bot_admin'
 require 'timers'
 require 'active_support/time'
 require 'cinch'
