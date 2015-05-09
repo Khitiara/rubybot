@@ -2,7 +2,7 @@ require 'chronic_duration'
 
 require 'open-uri'
 require 'json'
-require 'iso8601/duration'
+require 'iso8601'
 
 class Youtube
   include Cinch::Plugin
