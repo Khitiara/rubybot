@@ -1,0 +1,2 @@
+gem 'video_info'
+gem 'chronic_duration'
