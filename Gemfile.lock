@@ -16,7 +16,6 @@ GEM
     eventmachine (1.0.7)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
-    ffi (1.9.6)
     git.io (0.0.3)
     googleajax (1.0.1)
       json (>= 1.0.0)
@@ -40,8 +39,6 @@ GEM
     rack-protection (1.5.3)
       rack
     revolver (1.1.1)
-    rufus-lua (1.1.2)
-      ffi (~> 1.9)
     sanitize (3.1.2)
       crass (~> 1.0.1)
       nokogiri (>= 1.4.4)
@@ -84,7 +81,6 @@ DEPENDENCIES
   googleajax
   rack (~> 1.1)
   revolver (~> 1.1.1)
-  rufus-lua
   sanitize
   sinatra
   thin

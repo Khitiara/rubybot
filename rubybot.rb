@@ -23,7 +23,10 @@ $bot = ElrosBot::Bot.new(
     })
 
 Signal.trap('TERM') do
-  bot.quit
+  $bot.quit
+end
+Signal.trap('HUP') do
+  $bot.reload_conf
 end
 
 $bot.start

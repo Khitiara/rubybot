@@ -7,7 +7,7 @@ module ElrosBot
     def initialize(bot)
       @bot    = bot
       levels  = bot.bot_config['acl'] || {}
-      @levels = levels.merge({ "#{bot.owner.to_s}": 0 })
+      @levels = levels.merge({"#{bot.owner.to_s}" => 0})
     end
 
     def authed?(user, level=0)

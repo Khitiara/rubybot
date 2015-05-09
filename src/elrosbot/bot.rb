@@ -14,7 +14,8 @@ module ElrosBot
 
     def initialize(data)
       super() do
-        @cfg_file   = File.read data[:cfg_filename]
+        @cfg_filename = data[:cfg_filename]
+        @cfg_file   = File.read @cfg_filename
         @bot_config = Yajl::Parser.parse(@cfg_file)
         @owner      = @bot_config['owner']
         @acl        = ElrosBot::Acl.new(self)
@@ -39,7 +40,7 @@ module ElrosBot
             end
           end
           # noinspection RubyResolve
-          c.plugins.plugins = data[:plugins]
+          c.plugins.plugins = data[:plugins] + [BotAdmin]
 
           c.plugins.options[Cinch::HttpServer] = {
               host: data[:http_host],
@@ -58,6 +59,37 @@ module ElrosBot
       text = JSON.pretty_unparse @bot_config
       File.open(@cfg_file, 'w') do |file|
         file.puts text
+      end
+      reload_conf
+    end
+
+    def reload_conf
+      @cfg_file   = File.read @cfg_filename
+      @bot_config = Yajl::Parser.parse(@cfg_file)
+      @owner      = @bot_config['owner']
+      @acl        = ElrosBot::Acl.new(self)
+      configure do |c|
+        @bot_config['bot'].each do |k, v|
+          segments = k.split('.')
+          object   = c
+          segments.each do |s|
+            # call the setter for the last segment on the previous segment's object
+            # or the main config object if there was only one segment
+            if s == segments.last
+              object.send s + '=', v
+              # for all segments but the last, call the getter and obtain a nested config object
+            else
+              object = c.send s
+            end
+          end
+        end
+        # noinspection RubyResolve
+        c.plugins.plugins = data[:plugins] + [BotAdmin]
+
+        c.plugins.options[Cinch::HttpServer] = {
+            host: data[:http_host],
+            port: data[:http_port]
+        }
       end
     end
   end
