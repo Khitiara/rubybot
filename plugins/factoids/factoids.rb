@@ -89,6 +89,27 @@ module Macros
       end,
       'echo'      => Macro.implement do |_, _, args, _, _|
         args
+      end,
+      'roll' => Macro.implement do |_, _, args, _, nick|
+        blob = /(?:(?:(?'times'\d+)#)?(?'num'\d+))?d(?'sides'\d+)(?:(?'mod'[+-])(?'modnum'\d+))?/.match args
+        repeats = blob['times'].to_i || 1
+        rolls = blob['num'].to_i || 1
+        sides = blob['sides'].to_i
+        offset_op = blob['mod']
+        offset = blob['modnum']
+        repeats = 1 if repeats < 1
+        rolls   = 1 if rolls < 1
+        total = 0
+        repeats.times do
+          rolls.times do
+            total += rand(sides.to_i) + 1
+          end
+          if offset_op
+            total = total.send(offset_op, offset.to_i)
+          end
+        end
+
+        "#{nick}: You rolled #{args} -> #{total}"
       end
   }
 
