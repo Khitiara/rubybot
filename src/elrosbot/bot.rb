@@ -58,7 +58,7 @@ module ElrosBot
 
     def save
       text = JSON.pretty_unparse @bot_config
-      File.open(@cfg_file, 'w') do |file|
+      File.open(@cfg_filename, 'w') do |file|
         file.puts text
       end
       reload_conf
@@ -84,13 +84,6 @@ module ElrosBot
             end
           end
         end
-        # noinspection RubyResolve
-        c.plugins.plugins = data[:plugins] + [BotAdmin]
-
-        c.plugins.options[Cinch::HttpServer] = {
-            host: data[:http_host],
-            port: data[:http_port]
-        }
       end
     end
   end

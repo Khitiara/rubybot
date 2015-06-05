@@ -7,7 +7,21 @@ module ElrosBot
     def initialize(bot)
       @bot    = bot
       levels  = bot.bot_config['acl'] || {}
-      @levels = levels.merge({"#{bot.owner.to_s}" => 0})
+      @levels = levels.merge({bot.owner.to_s => 0})
+    end
+
+    def set(user, level)
+      raise 'Not allowed' if user == bot.owner.to_s or level < 1
+      @levels[user] = level
+    end
+
+    def get(user)
+      @levels[user] || -1
+    end
+
+    def rm(user)
+      raise 'Not allowed' if user == bot.owner.to_s
+      @levels.delete user
     end
 
     def authed?(user, level=0)
@@ -22,7 +36,7 @@ module ElrosBot
     end
 
     def save
-      bot.bot_config['acl'] = @levels
+      bot.bot_config['acl'] = @levels.reject { |k, _| k == bot.owner.to_s }
       bot.save
     end
   end
