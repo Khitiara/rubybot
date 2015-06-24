@@ -1,0 +1,2 @@
+gem "octokit", "~> 3.8"
+gem "faraday-http-cache", "~> 1.1"

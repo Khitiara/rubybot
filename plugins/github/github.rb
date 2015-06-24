@@ -10,11 +10,6 @@ class Github
   extend Cinch::HttpServer::Verbs
   include Cinch::Plugin
 
-  listen_to :connect, method: :connected
-
-  def connected(_)
-  end
-
   before do
     request.body.rewind
     read             = request.body.read

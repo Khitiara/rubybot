@@ -20,6 +20,7 @@ $bot = ElrosBot::Bot.new(
                        Github,
                        PingLists,
                        Youtube,
+                       GithubLinker,
                        Cinch::HttpServer]
     })
 

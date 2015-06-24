@@ -25,6 +25,8 @@ GEM
     extlib (0.9.16)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
+    faraday-http-cache (1.1.1)
+      faraday (~> 0.8)
     git.io (0.0.3)
     google-api-client (0.8.6)
       activesupport (>= 3.2)
@@ -74,6 +76,8 @@ GEM
     nokogumbo (1.2.0)
       nokogiri
     numerizer (0.1.1)
+    octokit (3.8.0)
+      sawyer (~> 0.6.0, >= 0.5.3)
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
@@ -83,6 +87,9 @@ GEM
       crass (~> 1.0.1)
       nokogiri (>= 1.4.4)
       nokogumbo (= 1.2.0)
+    sawyer (0.6.0)
+      addressable (~> 2.3.5)
+      faraday (~> 0.8, < 0.10)
     signet (0.6.0)
       addressable (~> 2.3)
       extlib (~> 0.9)
@@ -125,10 +132,12 @@ DEPENDENCIES
   chronic_duration
   cinch (~> 2.1.0)
   commander
+  faraday-http-cache (~> 1.1)
   git.io (~> 0.0.3)
   google-api-client
   googleajax
   iso8601
+  octokit (~> 3.8)
   rack (~> 1.1)
   revolver (~> 1.1.1)
   sanitize
