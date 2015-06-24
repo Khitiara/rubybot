@@ -56,6 +56,26 @@ class BotAdmin
         msg.channel.msg 'Saved successfully'
       end
     end
+    parser.command :'factoid reserve' do |c|
+      c.action do |args, _|
+        name = args.shift
+        if name
+          reserve_factoid name
+        else
+          msg.channel.msg 'Invalid usage!'
+        end
+      end
+    end
+    parser.command :'factoid free' do |c|
+      c.action do |args, _|
+        name = args.shift
+        if name
+          free_factoid name
+        else
+          msg.channel.msg 'Invalid usage!'
+        end
+      end
+    end
     parser.run!
   end
 end
