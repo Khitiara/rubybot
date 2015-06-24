@@ -76,6 +76,11 @@ class BotAdmin
         end
       end
     end
-    parser.run!
+    parser.always_trace!
+    begin
+      parser.run!
+    rescue InvalidCommandError
+      msg.reply 'I dont know how to do that!'
+    end
   end
 end
