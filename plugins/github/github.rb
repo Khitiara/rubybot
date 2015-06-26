@@ -16,19 +16,18 @@ class Github
     @request_payload = Yajl::Parser.parse(read, symbolize_keys: true)
   end
 
-  def get_repos(repo)
-    conf  = bot.bot_config['github_repos']
-    repos = []
-    if conf.has_key? repo[:full_name]
-      repos += conf[repo[:full_name]]
-    end
-    if conf.has_key? "#{repo[:owner][:login]}/"
-      repos += conf["#{repo[:owner][:login]}/"]
-    end
-    repos
-  end
-
   post '/gh-hook', :agent => /GitHub-Hookshot\/.*/ do
+    def get_repos(repo)
+      conf  = bot.bot_config['github_repos']
+      repos = []
+      if conf.has_key? repo[:full_name]
+        repos += conf[repo[:full_name]]
+      end
+      if conf.has_key? "#{repo[:owner][:login]}/"
+        repos += conf["#{repo[:owner][:login]}/"]
+      end
+      repos
+    end
     payload = @request_payload
     event   = request.env['HTTP_X_GITHUB_EVENT']
     case event
