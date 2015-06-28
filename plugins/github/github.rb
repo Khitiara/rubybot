@@ -4,6 +4,10 @@ require 'cinch/formatting'
 require 'cinch/helpers'
 require 'yajl'
 
+def get_repo_owner(repo)
+  repo[:repository][:owner][:login] || repo[:sender][:login]
+end
+
 # noinspection RubyResolve
 
 def get_repos(repo)
@@ -12,8 +16,8 @@ def get_repos(repo)
   if conf.has_key? repo[:full_name]
     repos += conf[repo[:full_name]]
   end
-  if conf.has_key? "#{repo[:owner][:login]}/"
-    repos += conf["#{repo[:owner][:login]}/"]
+  if conf.has_key? "#{get_repo_owner(repo)}/"
+    repos += conf["#{get_repo_owner(repo)}/"]
   end
   repos
 end
@@ -40,7 +44,7 @@ class Github
           title = payload[:pull_request][:title]
           url   = Gitio::shorten payload[:pull_request][:html_url]
           user  = payload[:sender][:login]
-          get_repos(payload[:repository]).map do |it|
+          get_repos(payload).map do |it|
             bot.channel_list.find(it)
           end.each do |chan|
             chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} #{action} pull request #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}"
@@ -51,7 +55,7 @@ class Github
         issue = payload[:pull_request][:number]
         user  = payload[:comment][:user][:login]
         repo  = payload[:repository][:name]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} reviewed pull request #{Cinch::Formatting.format(:green, "\##{issue}")} - #{url}"
@@ -63,7 +67,7 @@ class Github
         repo = payload[:repository][:name]
         url  = Gitio::shorten payload[:compare]
         user = payload[:sender][:login]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           puts it
           bot.channel_list.find(it)
         end.each do |chan|
@@ -90,7 +94,7 @@ class Github
           title = payload[:issue][:title]
           url   = Gitio::shorten payload[:issue][:html_url]
           user  = payload[:sender][:login]
-          get_repos(payload[:repository]).map do |it|
+          get_repos(payload).map do |it|
             bot.channel_list.find(it)
           end.each do |chan|
             chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} #{action} issue #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}"
@@ -103,7 +107,7 @@ class Github
         user  = payload[:comment][:user][:login]
         title = payload[:issue][:title]
         repo  = payload[:repository][:name]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} commented on issue #{Cinch::Formatting.format(:green, "\##{issue}")}: \"#{title}\" - #{url}"
@@ -115,7 +119,7 @@ class Github
         repo = payload[:repository][:name]
         url  = Gitio::shorten payload[:repository][:html_url]
         user = payload[:sender][:login]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} created #{type} #{name}: #{url}"
@@ -127,7 +131,7 @@ class Github
         repo = payload[:repository][:name]
         url  = Gitio::shorten payload[:repository][:html_url]
         user = payload[:sender][:login]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} deleted #{type} #{name}: #{url}"
@@ -137,7 +141,7 @@ class Github
         repo = payload[:repository][:name]
         url  = Gitio::shorten payload[:forkee][:html_url]
         user = payload[:forkee][:owner][:login]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} forked the repo: #{url}"
@@ -148,7 +152,7 @@ class Github
         commit = payload[:comment][:commit_id]
         user   = payload[:comment][:user][:login]
         repo   = payload[:repository][:name]
-        get_repos(payload[:repository]).map do |it|
+        get_repos(payload).map do |it|
           bot.channel_list.find(it)
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} commented on commit #{Cinch::Formatting.format(:green, commit)}: #{url}"
@@ -160,7 +164,7 @@ class Github
           repo = payload[:repository][:name]
           url  = payload[:target_url]
           desc = payload[:description]
-          get_repos(payload[:repository]).map do |it|
+          get_repos(payload).map do |it|
             bot.channel_list.find(it)
           end.each do |chan|
             chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}"
