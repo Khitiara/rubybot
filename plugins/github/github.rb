@@ -5,7 +5,7 @@ require 'cinch/helpers'
 require 'yajl'
 
 def get_repo_owner(repo)
-  repo[:repository][:owner][:login] || repo[:sender][:login]
+  repo[:repository][:owner][:login] || repo[:repository][:owner][:name]
 end
 
 # noinspection RubyResolve
