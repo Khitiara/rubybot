@@ -161,13 +161,17 @@ class Github
       when 'status'
         state = payload[:state]
         unless state == 'pending'
-          repo = payload[:repository][:name]
-          url  = payload[:target_url]
-          desc = payload[:description]
+          repo  = payload[:repository][:name]
+          url   = payload[:target_url]
+          desc  = payload[:description]
+          extra = ''
+          unless state == 'success'
+            extra = " Blame: #{payload[:commit][:commit][:author][:name]}"
+          end
           get_repos(payload).map do |it|
             bot.channel_list.find(it)
           end.each do |chan|
-            chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}"
+            chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{desc}: #{url}#{extra}"
           end
         end
       else
