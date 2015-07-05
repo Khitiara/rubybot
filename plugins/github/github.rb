@@ -73,12 +73,7 @@ class Github
         end.each do |chan|
           chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting.format(:orange, user)} pushed #{Cinch::Formatting.format(:green, num.to_s)} commits to #{Cinch::Formatting.format(:green, name)}: #{url}"
           payload[:commits].take(3).each do |commit|
-            body      = commit[:message].lines[0]
-            maxlength = 510 - (':' + " #{command} " + ' :' + '""').size
-            maxlength = maxlength - @bot.mask.to_s.length - @name.to_s.length
-            if body.bytesize > maxlength
-              body = "#{body[0..maxlength - 4]}..."
-            end
+            body = commit[:message].lines[0]
             chan.msg "[#{Cinch::Formatting.format(:blue, repo)}]: #{Cinch::Formatting::format(:green, commit[:id][0..7])} #{body}"
           end
           if num - 3 > 0
