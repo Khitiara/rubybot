@@ -1,0 +1,34 @@
+{
+	"bot": {
+		"server": "irc.esper.net",
+		"channels": [
+			"#jan_test_channel"
+		],
+		"nick": "rubybot_test_jan",
+		"realname": "RubyBot Test Jan",
+		"sasl.username": "",
+		"sasl.password": "",
+		"user": "rubybot_test_jan"
+	},
+	"plugins": {
+		"bot_admin": {},
+                "factoids": {},
+		"github": {},
+		"github_linker": {},
+		"google": {},
+		"http_server": {},
+		"pinglists": {},
+		"sed": {},
+		"tweet": {},
+		"youtube": {}
+	},
+	"twitter": {
+		"consumer_key": "",
+		"consumer_secret": "",
+		"access_key": "",
+		"access_secret": ""
+	},
+	"github_repos": {
+		"user/repo": ["#jan_test_channel"]
+	}
+}
