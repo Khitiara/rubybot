@@ -1,0 +1,18 @@
+require: rubocop-rspec
+AllCops:
+  Exclude:
+    - '*/http_server.rb'
+Metrics/LineLength:
+  Max: 120
+Style/Documentation:
+  Enabled: False
+Metrics/CyclomaticComplexity:
+  Max: 12
+Metrics/PerceivedComplexity:
+  Max: 12
+Metrics/ClassLength:
+  Max: 120
+Metrics/MethodLength:
+  Max: 20
+Metrics/AbcSize:
+  Max: 30
