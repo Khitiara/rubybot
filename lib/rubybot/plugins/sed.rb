@@ -1,10 +1,26 @@
+require 'rubybot/core/command_info'
+
 module Rubybot
   module Plugins
     class Sed
       include Cinch::Plugin
       listen_to :channel
       SED_REGEX = %r{^s/(.+?)/(.+?)(/\S+|/|$)}
+      set plugin_name: 'sed'
       match SED_REGEX, use_prefix: false
+
+      def commands
+        help = <<HELP
+Replaces the most recent occurance of <old> with <new>.
+
+Append 'g' to replace all occurances in the found message.
+Append 'i' to be case insensitive.
+HELP
+        [Rubybot::Core::CommandInfo.new('s/<old>/<new>/[g][i]',
+                                        'Replaces the most recent occurance of <old> with <new>',
+                                        prefix: false,
+                                        help_long: help)]
+      end
 
       def listen(m)
         return if m.message =~ SED_REGEX || !m.channel

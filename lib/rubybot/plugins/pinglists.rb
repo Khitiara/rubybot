@@ -1,4 +1,5 @@
 require 'json'
+require 'rubybot/core/command_info'
 
 module Rubybot
   module Plugins
@@ -11,6 +12,17 @@ module Rubybot
         read
       end
 
+      def commands
+        [
+          Rubybot::Core::CommandInfo.new('?s <list> [<user>]',
+                                         'Subscribes the <user> (or the executor, if empty) to the <list>.'),
+          Rubybot::Core::CommandInfo.new('?u <list> [<user>]',
+                                         'Unsubscribes the <user> (or the executor, if empty) from the <list>.'),
+          Rubybot::Core::CommandInfo.new('?p <list> [<message>]', 'Mentions all the people in the <list>.'),
+          Rubybot::Core::CommandInfo.new('<list>: <message>', 'Mentions all the people in the <list>.', prefix: false)
+        ]
+      end
+
       def save
         File.write @lists_filename, JSON.pretty_unparse(@pinglists)
       end
@@ -19,7 +31,7 @@ module Rubybot
         @pinglists = JSON.parse File.read @lists_filename
       end
 
-      set prefix: '?'
+      set prefix: '?', plugin_name: 'pinglists'
       match(/s ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :subscribe)
       match(/p ([a-zA-Z0-9_]+)(?: (.+))?/, method: :ping)
       match(/u ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :unsub)

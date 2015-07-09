@@ -1,12 +1,25 @@
 require 'commander'
 require 'shellwords'
+require 'rubybot/core/command_info'
 
 module Rubybot
   module Plugins
     class BotAdmin
       include Cinch::Plugin
 
+      set prefix: '?', plugin_name: 'admin'
       match(/admin\s+(.+)/)
+
+      def commands
+        [
+          Rubybot::Core::CommandInfo.new('?admin acl set <user> <level>', 'Gives <user> access level <level>'),
+          Rubybot::Core::CommandInfo.new('?admin acl rem <user>', 'Removes any access level from <user>'),
+          Rubybot::Core::CommandInfo.new('?admin acl get <user>', 'Prints the access level for <user>'),
+          Rubybot::Core::CommandInfo.new('?admin acl save', 'Saves the current user/access levels'),
+          Rubybot::Core::CommandInfo.new('?admin factoid reserve <name>', 'Reserves the given factoid <name>'),
+          Rubybot::Core::CommandInfo.new('?admin factoid free <name>', 'Frees the given factoid <name>')
+        ]
+      end
 
       def execute(msg, command) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
         return unless bot.acl.auth_or_fail(msg.channel, msg.user)

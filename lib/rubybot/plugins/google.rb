@@ -8,6 +8,8 @@ module Rubybot
     class Google # < Factoids::Macro
       include Cinch::Plugin
 
+      set plugin_name: 'google'
+
       def initialize(bot)
         super
         GoogleAjax.referrer = 'robotbrain.info'

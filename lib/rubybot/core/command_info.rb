@@ -5,6 +5,7 @@ module Rubybot
       attr_reader :with_prefix
       attr_reader :help_short
       attr_reader :help_long
+      attr_accessor :plugin
 
       def initialize(command, help_short, options = {})
         @command = command

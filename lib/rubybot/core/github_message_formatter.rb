@@ -1,3 +1,11 @@
+require 'cinch/formatting'
+
+class String
+  def format(*settings)
+    Cinch::Formatting.format(*settings, self)
+  end
+end
+
 module Rubybot
   module Core
     class GithubMessageFormatter
@@ -18,7 +26,7 @@ module Rubybot
 
       def self.format_push_oneline(hash)
         message(hash[:repo], hash[:user],
-                "pushed #{Format :green, num.to_s} commits to #{Format :green, hash[:ref].slice(%r{^refs/heads/})}",
+                "pushed #{num.to_s.format :green} commits to #{hash[:ref].slice(%r{^refs/heads/}).format :green}",
                 hash[:url])
       end
 
@@ -29,12 +37,12 @@ module Rubybot
         response |= hash[:commits].take(3).map do |commit|
           message_item(hash[:repo], commit[:id][0..7], nil, commit[:message].lines.first, commit[:url])
         end
-        response << "[#{Format(:blue, hash[:repo])}]: ...and #{Format(:green, (num - 3).to_str)} more." if num - 3 > 0
+        response << "[#{hash[:repo].format :blue}]: ...and #{(num - 3).to_s.format :green} more." if num - 3 > 0
         response
       end
 
       def self.format_issue(hash)
-        message_item hash[:repo], "##{hash[:number]}", hash[:user], nil, hash[:url]
+        message_item hash[:repo], "##{hash[:number]}", hash[:user], hash[:title], hash[:url]
       end
 
       def self.format_issues(hash)
@@ -80,11 +88,11 @@ module Rubybot
       end
 
       def self.message(repo, user, action, url)
-        "[#{Format :blue, repo}]: #{format :orange, user} #{action}: #{Gitio.shorten url}"
+        "[#{repo.to_s.format :blue}]: #{user.to_s.format :orange} #{action}: #{Gitio.shorten url}"
       end
 
       def self.message_item(repo, item, user, action, url)
-        message "#{repo} ##{item}", user, action, url
+        message "#{repo} #{item.to_s.format :green}", user, action, url
       end
     end
   end

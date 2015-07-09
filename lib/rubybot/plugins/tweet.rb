@@ -20,6 +20,7 @@ module Rubybot
         [Rubybot::Core::CommandInfo.new('<tweet url>', 'Prints the contents of the given tweet', prefix: false)]
       end
 
+      set plugin_name: 'tweet'
       match %r{.*(https://twitter.com/[^/]+/status/[^/]+)}, use_prefix: false
 
       def execute(m, uri)
