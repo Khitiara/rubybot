@@ -1,11 +1,11 @@
 require 'rubybot/core/acl'
-require 'rubybot/core/log_db'
 require 'rubybot/plugins/http_server'
 require 'timers'
 require 'active_support/time'
 require 'active_support/inflector'
 require 'cinch'
 require 'yajl'
+require 'revolver'
 require 'pry'
 
 module Rubybot
@@ -13,14 +13,13 @@ module Rubybot
     attr_reader :bot_config
     attr_reader :owner
     attr_reader :acl
-    attr_accessor :logs
 
     def initialize(data = {})
       super()
       @cfg_filename = data[:cfg_filename]
       reload_conf
       @timers = Timers::Group.new
-      @logs = Core::LogDb.new
+      @logs = {}
       @fix_nick = @timers.every(1.hours) do
         @nick = @bot_config[:bot][:nick]
       end
@@ -28,6 +27,10 @@ module Rubybot
       on :disconnected do
         @fix_nick.cancel
       end
+    end
+
+    def logs(channel)
+      @logs[channel] ||= Revolver.new 500
     end
 
     def save

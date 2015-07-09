@@ -28,14 +28,14 @@ HELP
       end
 
       def log(channel, nick, message)
-        bot.logs.channel(channel) << { nick: nick, message: message }
+        bot.logs(channel) << { nick: nick, message: message }
       end
 
       def execute(m, matcher, replacement, conditional)
         regex = Regexp.new(matcher, conditional.include?('i'))
         is_global = conditional.include? 'g'
         got = false
-        bot.logs.channel(m.channel).to_a.reverse_each do |msg|
+        bot.logs(m.channel).to_a.reverse_each do |msg|
           next unless regex =~ msg[:message]
           out = is_global ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
           m.reply("#{msg[:nick]}: #{out}")
