@@ -1,5 +1,6 @@
 {
   "owner": "jandal",
+  "info": "$INFO",
   "bot": {
     "nick": "$NICK",
     "realname": "$REALNAME",

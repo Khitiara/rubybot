@@ -25,16 +25,31 @@ module Rubybot
         [
           Rubybot::Core::CommandInfo.new('?factoid show <name>', 'Shows how the factoid is defined'),
           Rubybot::Core::CommandInfo.new('?factoid set <name> [<definition>]',
-                                         '(Re)defines the factoid, or undefines it if <definition is empty>'),
+                                         '(Re)defines the factoid, or undefines it if <definition> is empty'),
+          Rubybot::Core::CommandInfo.new('?+<name>', 'Shows how the factoid is defined'),
+          Rubybot::Core::CommandInfo.new('?*<name> [<definition>]',
+                                         '(Re)defines the factoid, or undefines it if <definition> is empty'),
           Rubybot::Core::CommandInfo.new('?<name> [> <other name>]',
                                          'Prints the factoid (or executes it, in the case of macros).')
-        ]
+        ] | factoid_commands | macro_commands
+      end
+
+      def factoid_commands
+        @storage.factoids.map do |f|
+          Rubybot::Core::CommandInfo.new '?' + f.first, "Prints the contents for the factoid '#{f.first}'"
+        end
+      end
+
+      def macro_commands
+        Macros.macros.map do |m|
+          Rubybot::Core::CommandInfo.new '?' + m.first, "Runs and prints the result of the macro '#{m.first}'"
+        end
       end
 
       set prefix: '?', plugin_name: 'factoids'
       match factoid_command_regex
-      match(/factoid show ([a-zA-Z]+).*/, method: :show)
-      match(/factoid set ([a-zA-Z]+)(?: (.+))?/, method: :set)
+      match(/(?:\+|factoid show )([a-zA-Z]+).*/, method: :show)
+      match(/(?:\*|factoid set )([a-zA-Z]+)(?: (.+))?/, method: :set)
 
       def set(msg, name, value = nil)
         if @storage.reserved.key?(name) || Macros.macros.key?(name)
@@ -45,7 +60,7 @@ module Rubybot
           else
             @storage.user[name] = value
           end
-          save
+          @storage.save
         end
       end
 
@@ -77,6 +92,7 @@ module Rubybot
           resp = "${#{command}#{args_s.nil? ? '' : "(#{args_s})"}}"
         else
           resp = @storage.factoids[command]
+          return if resp.nil?
         end
         res = Macros.process msg, resp, msg.user.nick, args, prev
         if !rest.nil?

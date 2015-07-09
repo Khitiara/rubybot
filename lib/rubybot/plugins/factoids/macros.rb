@@ -15,10 +15,17 @@ module Rubybot
 
         class HelpMacro
           def run(message, _, args, _, _)
-            commands(message, args).each do |cmd|
-              message.user.notice cmd.plugin.class.plugin_name + ': ' + cmd.command + ': ' + cmd.help_short
-              next unless args != '' && cmd.command.start_with?(args) && cmd.help_long
-              message.user.notice cmd.help_long.lines.map { |l| '    ' + l }.join "\n"
+            if args.empty?
+              message.user.notice message.bot.bot_config[:info]
+              message.user.notice "Available plugins: #{message.bot.plugins.map { |p| p.class.plugin_name }.join ', '}"
+              message.user.notice 'Use ?help <plugin> for a list of commands for a plugin.'
+              message.user.notice 'Use ?help <start of command> for help on a specific command.'
+            else
+              commands(message, args).each do |cmd|
+                message.user.notice cmd.plugin.class.plugin_name + ': ' + cmd.command + ': ' + cmd.help_short
+                next unless args != '' && cmd.command.start_with?(args) && cmd.help_long
+                message.user.notice cmd.help_long.lines.map { |l| '    ' + l }.join "\n"
+              end
             end
 
             'Replying with notice'
@@ -27,20 +34,14 @@ module Rubybot
           private
 
           def commands(message, arg)
-            commands = message.bot.plugins.map do |plugin|
+            plugin = message.bot.plugins.find { |p| p.class.plugin_name == arg }
+            if plugin.nil?
+              message.bot.plugins.map do |plugin|
+                commands_for plugin, message.channel
+              end.flatten.find_all { |c| c.command.start_with? arg }
+            else
               commands_for plugin, message.channel
-            end.flatten
-
-            if arg != ''
-              plugin = message.bot.plugins.find { |p| p.class.plugin_name == arg }
-              if plugin.nil?
-                commands = commands.find_all { |c| c.command.start_with? arg }
-              else
-                commands = commands_for plugin, message.channel
-              end
             end
-
-            commands
           end
 
           def commands_for(plugin, channel)

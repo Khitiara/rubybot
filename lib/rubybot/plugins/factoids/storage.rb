@@ -42,8 +42,8 @@ module Rubybot
 
         def read
           parsed = JSON.parse File.read @factoid_filename
-          @reserved = parsed['reserved']
-          @user = parsed['user']
+          @reserved = parsed['reserved'] || {}
+          @user = parsed['user'] || {}
         end
       end
     end

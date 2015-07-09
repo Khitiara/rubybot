@@ -16,9 +16,10 @@ module Rubybot
           return unless agree('config.json already exists, do you want to overwrite it? ')
         end
 
-        variables = {}
+        variables = { info: nil }
         if agree('Do you want to get help setting up your config? ')
-          variables = variables.merge(query_irc).merge(query_twitter).merge(query_github).merge(query_youtube)
+          variables[:info] = ask 'Information to display with help command: '
+          variables.merge!(query_irc).merge(query_twitter).merge(query_github).merge(query_youtube)
         end
 
         Rubybot::Util::TemplateProcessor.process_file variables, 'config.json.template' => 'config.json'
