@@ -1,6 +1,6 @@
 module Rubybot
   module Plugins
-    module Factoids
+    class Factoids
       class MacroSemanticError < Exception
         attr_accessor :msg
 

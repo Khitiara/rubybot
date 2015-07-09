@@ -1,34 +1,62 @@
 {
-	"bot": {
-		"server": "irc.esper.net",
-		"channels": [
-			"#jan_test_channel"
-		],
-		"nick": "rubybot_test_jan",
-		"realname": "RubyBot Test Jan",
-		"sasl.username": "",
-		"sasl.password": "",
-		"user": "rubybot_test_jan"
-	},
-	"plugins": {
-		"bot_admin": {},
-                "factoids": {},
-		"github": {},
-		"github_linker": {},
-		"google": {},
-		"http_server": {},
-		"pinglists": {},
-		"sed": {},
-		"tweet": {},
-		"youtube": {}
-	},
-	"twitter": {
-		"consumer_key": "",
-		"consumer_secret": "",
-		"access_key": "",
-		"access_secret": ""
-	},
-	"github_repos": {
-		"user/repo": ["#jan_test_channel"]
-	}
+  "owner": "jandal",
+  "bot": {
+    "nick": "$NICK",
+    "realname": "$REALNAME",
+    "user": "$USERNAME",
+    "server": "$SERVER",
+    "channels": ["$CHANNEL"],
+    "plugins": {
+      "plugins": [
+        "Rubybot::Plugins::BotAdmin",
+        "Rubybot::Plugins::Factoids",
+        "Rubybot::Plugins::Github",
+        "Rubybot::Plugins::GithubLinker",
+        "Rubybot::Plugins::Google",
+        "Rubybot::Plugins::HttpServer",
+        "Rubybot::Plugins::Pinglists",
+        "Rubybot::Plugins::Sed",
+        "Rubybot::Plugins::Tweet",
+        "Rubybot::Plugins::Youtube"
+      ],
+      "options": {
+        "Rubybot::Plugins::Factoids": {
+          "filename": "factoids.json"
+        },
+        "Rubybot::Plugins::Github": {
+          "repos": {
+            "$GITHUB_REPO": [
+              "$CHANNEL"
+            ]
+          }
+        },
+        "Rubybot::Plugins::GithubLinker": {
+          "repos": {
+            "$CHANNEL": {
+              "$GITHUB_REPO": [
+                "test",
+                "123"
+              ]
+            }
+          }
+        },
+        "Rubybot::Plugins::HttpServer": {
+          "host": "0.0.0.0",
+          "port": "4567"
+        },
+        "Rubybot::Plugins::Pinglists": {
+          "filename": "pinglists.json"
+        },
+        "Rubybot::Plugins::Tweet": {
+          "consumer_key": "$TWITTER_CONSUMER_KEY",
+          "consumer_secret": "$TWITTER_CONSUMER_SECRET",
+          "access_token": "$TWITTER_ACCESS_TOKEN",
+          "access_token_secret": "$TWITTER_ACCESS_TOKEN_SECRET"
+        },
+        "Rubybot::Plugins::Youtube": {
+          "yt_key": "$YOUTUBE_KEY"
+        }
+      }
+    }
+  }
 }

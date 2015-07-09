@@ -1,5 +1,4 @@
 require 'chronic_duration'
-
 require 'open-uri'
 require 'json'
 require 'iso8601'
@@ -8,17 +7,26 @@ module Rubybot
   module Plugins
     class Youtube
       include Cinch::Plugin
-      YT_REGEX = /.*https?:\/\/(?:www\.)?youtube.com\/watch\?(?=.*v=(?<id>\w+))(?:\S+)?.*/
+      YT_REGEX = %r{.*https?://(?:www\.)?youtube.com/watch\?(?=.*v=(?<id>\w+))(?:\S*).*}
       match YT_REGEX, use_prefix: false
 
       def execute(m, id)
-        video = "https://www.googleapis.com/youtube/v3/videos?id=#{id}&part=snippet%2CcontentDetails%2Cstatistics&key=#{bot.bot_config['yt_key']}"
-        hash = JSON.parse(open(video).read)['items'][0]
+        hash  = JSON.parse(open(url id, config['yt_key']).read)['items'][0]
         title = hash['snippet']['title']
-        dur   = ChronicDuration.output(ISO8601::Duration.new(hash['contentDetails']['duration']).to_seconds, :keep_zero => true)
+        dur   = format_duration hash['contentDetails']['duration']
         likes = hash['statistics']['likeCount']
         dislikes = hash['statistics']['dislikeCount']
         m.reply "Youtube: #{title} (#{dur}), #{likes} likes, #{dislikes} dislikes"
+      end
+
+      private
+
+      def url(id, key)
+        "https://www.googleapis.com/youtube/v3/videos?id=#{id}&part=snippet%2CcontentDetails%2Cstatistics&key=#{key}"
+      end
+
+      def format_duration(raw)
+        ChronicDuration.output(ISO8601::Duration.new(raw).to_seconds, keep_zero: true)
       end
     end
   end

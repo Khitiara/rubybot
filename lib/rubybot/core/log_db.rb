@@ -4,8 +4,8 @@ module Rubybot
   module Core
     class LogDb
       def initialize
-        @channels = Hash.new
-        @queries = Hash.new
+        @channels = {}
+        @queries = {}
       end
 
       def channel(name)

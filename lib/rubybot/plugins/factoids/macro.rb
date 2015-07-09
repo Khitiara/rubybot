@@ -1,12 +1,12 @@
 module Rubybot
   module Plugins
-    module Factoids
+    class Factoids
       class Macro
-        def run(_,_, _, _, _)
-          raise 'SubclassResponsibility'
+        def run(_, _, _, _, _)
+          fail 'SubclassResponsibility'
         end
 
-        def self.implement (&blk)
+        def self.implement(&blk)
           (Class.new Macro do
             def initialize(blk)
               @blk = blk

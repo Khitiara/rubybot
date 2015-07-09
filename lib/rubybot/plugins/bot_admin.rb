@@ -6,19 +6,18 @@ module Rubybot
     class BotAdmin
       include Cinch::Plugin
 
-      match /admin\s+(.+)/
+      match(/admin\s+(.+)/)
 
-      def execute(msg, command)
+      def execute(msg, command) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
         return unless bot.acl.auth_or_fail(msg.channel, msg.user)
-        argv   = Shellwords.split command
-        parser = Commander::Runner.new argv
+        parser = Commander::Runner.new Shellwords.split command
         parser.program :name, 'RubyBot Admin Module'
         parser.program :version, '1.0.0'
         parser.program :description, 'IRC Bot'
         parser.command :'acl set' do |c|
           c.action do |args, _|
             user, level = *(args.shift(2))
-            if user and level
+            if user && level
               bot.acl.set user, level.to_i
             else
               msg.channel.msg 'Invalid usage!'
@@ -27,7 +26,7 @@ module Rubybot
         end
         parser.command :'acl rem' do |c|
           c.action do |args, _|
-            user= args.shift
+            user = args.shift
             if user
               bot.acl.rm user
             else
@@ -37,7 +36,7 @@ module Rubybot
         end
         parser.command :'acl get' do |c|
           c.action do |args, _|
-            user= args.shift
+            user = args.shift
             if user
               msg.channel.msg bot.acl.get user
             else

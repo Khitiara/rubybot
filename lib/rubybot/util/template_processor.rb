@@ -1,9 +1,9 @@
 module Rubybot
   module Util
     class TemplateProcessor
-      def initialize(variables)
-        fail :InvalidArgumentsError, 'TemplateProcess.new must be called with hash as argument' unless variables.is_a? Hash
-        @variables = variables
+      def initialize(var)
+        fail :InvalidArgumentsError, 'TemplateProcess.new must be called with hash as argument' unless var.is_a? Hash
+        @variables = var
       end
 
       def process(data)
@@ -16,7 +16,7 @@ module Rubybot
       def self.process_file(variables, files = {})
         processor = TemplateProcessor.new variables
         files.each do |input, output|
-          File.write input, processor.process(File.read output)
+          File.write output, processor.process(File.read input)
         end
       end
     end

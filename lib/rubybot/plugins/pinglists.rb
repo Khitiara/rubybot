@@ -2,42 +2,39 @@ require 'json'
 
 module Rubybot
   module Plugins
-    class PingLists
+    class Pinglists
       include Cinch::Plugin
-      
-      def initialize
-        @lists_filename = 'pinglists.json'
+
+      def initialize(bot)
+        super
+        @lists_filename = config[:filename]
         read
       end
-      
+
       def save
-        File.write @lists_filename, JSON.pretty_unparse @pinglists
+        File.write @lists_filename, JSON.pretty_unparse(@pinglists)
       end
-      
+
       def read
         @pinglists = JSON.parse File.read @lists_filename
       end
-      
+
       set prefix: '?'
-      match /s ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :subscribe
-      match /p ([a-zA-Z0-9_]+)(?: (.+))?/, method: :ping
-      match /u ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :unsub
-      match /([a-zA-Z0-9_]+):.*/, use_prefix: false, method: :ping2
+      match(/s ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :subscribe)
+      match(/p ([a-zA-Z0-9_]+)(?: (.+))?/, method: :ping)
+      match(/u ([a-zA-Z0-9_]+)(?: ([a-zA-Z0-9_]+))?/, method: :unsub)
+      match(/([a-zA-Z0-9_]+):.*/, use_prefix: false, method: :ping2)
 
       def subscribe(msg, list, user = nil)
         chan = msg.channel
         return unless chan
 
         if user.nil?
-          unless @pinglists[list]
-            @pinglists[list] = [];
-          end
+          @pinglists[list] = [] unless @pinglists[list]
 
           @pinglists[list] << msg.user.nick
         elsif @bot.acl.authed? msg.user, 1
-          unless @pinglists[list]
-            @pinglists[list] = [];
-          end
+          @pinglists[list] = [] unless @pinglists[list]
 
           @pinglists[list] << user
         else
@@ -51,9 +48,7 @@ module Rubybot
         chan = msg.channel
         return unless chan
 
-        unless @pinglists[list]
-          @pinglists[list] = [];
-        end
+        @pinglists[list] = [] unless @pinglists[list]
 
         return if @pinglists[list].empty?
 
@@ -69,15 +64,11 @@ module Rubybot
         return unless chan
 
         if user.nil?
-          unless @pinglists[list]
-            @pinglists[list] = [];
-          end
+          @pinglists[list] = [] unless @pinglists[list]
 
           @pinglists[list].delete msg.user.nick
         elsif @bot.acl.authed? msg.user, 1
-          unless @pinglists[list]
-            @pinglists[list] = [];
-          end
+          @pinglists[list] = [] unless @pinglists[list]
 
           @pinglists[list].delete user
         else
@@ -91,9 +82,7 @@ module Rubybot
         chan = msg.channel
         return unless chan
 
-        unless @pinglists[list]
-          @pinglists[list] = [];
-        end
+        @pinglists[list] = [] unless @pinglists[list]
 
         return if @pinglists[list].empty?
 

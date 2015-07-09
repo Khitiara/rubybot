@@ -72,7 +72,7 @@
 #       # HTTP statuscode
 #       204 # No Content
 #     end
-#   
+#
 #   end
 #
 # The Cinch bot including this plugin will echo "Hi to everyone!"
@@ -121,12 +121,12 @@
 # it under the terms of the GNU Lesser General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -153,107 +153,105 @@ require 'rack/protection/xss_header'
 require 'rack/file'
 
 # HTTP Server plugin for Cinch.
-class Cinch::HttpServer
+module Rubybot
+  module Plugins
+    class HttpServer
+      # Logging adapter between Rack and Cinch. You can pass an instance
+      # of this class into Rack::CommonLogger.new and it will make the
+      # Rack logger log onto all of Cinch’s registered loggers (at info
+      # level).
+      class CinchLogging
+        # Create a new instance of this class. Pass in the
+        # Cinch::Bot instance to log to.
+        def initialize(bot)
+          @bot = bot
+        end
 
-  # Logging adapter between Rack and Cinch. You can pass an instance
-  # of this class into Rack::CommonLogger.new and it will make the
-  # Rack logger log onto all of Cinch’s registered loggers (at info
-  # level).
-  class CinchLogging
+        # This method is called by Rack::CommonLogger when it wants
+        # to write out a line. It delegates to the +info+ method of
+        # the wrapped bot’s +loggers+ attribute.
+        def write(str)
+          @bot.loggers.info(str)
+        end
+      end
 
-    # Create a new instance of this class. Pass in the
-    # Cinch::Bot instance to log to.
-    def initialize(bot)
-      @bot = bot
+      # Micro Sinatra application that is extended by
+      # other Cinch plugins by means of including the
+      # Verbs module and defining routes.
+      class CinchHttpServer < Sinatra::Base
+        # When starting the server, we set this to the currently
+        # running Cinch::Bot instance.
+        class << self
+          attr_writer :bot
+        end
+
+        # The currently running Cinch::Bot instance or +nil+ if
+        # it’s not available yet (i.e. the bot hasn’t been started
+        # yet).
+        class << self
+          attr_reader :bot
+        end
+
+        # Shortcut for calling:
+        #   self.class.bot
+        def bot
+          self.class.bot
+        end
+      end
+
+      # Extend your plugins with this module to allow them
+      # to register routes to the HTTP server. You’ll get
+      # direct access to Sinatra’s ::get, ::put, ::post,
+      # ::patch, and ::delete methods.
+      module Verbs
+        extend Forwardable
+        delegate [:get, :put, :post, :patch, :delete, :before, :after] => CinchHttpServer
+      end
+
+      include Cinch::Plugin
+      listen_to :connect,    method: :start_http_server
+      listen_to :disconnect, method: :stop_http_server
+
+      def start_http_server(_msg)
+        host    = config[:host] || 'localhost'
+        port    = config[:port] || 1234
+        logfile = config[:logfile] || :cinch
+
+        bot.info "Starting HTTP server on #{host} port #{port}"
+
+        # Set up thin with our Rack endpoint
+        @server = Thin::Server.new(host,
+                                   port,
+                                   CinchHttpServer,
+                                   signals: false)
+
+        # If requested, iject our special rack-to-cinch logging
+        # adapter that makes Rack::CommonLogger log to Cinch’s
+        # registered loggers. We cannot add this middleware
+        # earlier, because we don’t have the requried Cinch::Bot
+        # instance ready prior to calling `start_http_server'.
+        if logfile == :cinch
+          @server.app.use(Rack::CommonLogger, CinchLogging.new(bot))
+        else
+          # Otherwise, just create a normal CommonLogger to store
+          # our HTTP request log in.
+          file = File.open(logfile.to_str, 'a')
+          file.sync = true # Logs should never be buffered
+          @server.app.use(Rack::CommonLogger, file)
+        end
+
+        # Make the Cinch::Bot instance available inside the HTTP
+        # handlers.
+        @server.app.bot = bot
+
+        # Start the HTTP server!
+        @server.start
+      end
+
+      def stop_http_server(_msg)
+        bot.info 'Halting HTTP server'
+        @server.stop!
+      end
     end
-
-    # This method is called by Rack::CommonLogger when it wants
-    # to write out a line. It delegates to the +info+ method of
-    # the wrapped bot’s +loggers+ attribute.
-    def write(str)
-      @bot.loggers.info(str)
-    end
-
   end
-
-  # Micro Sinatra application that is extended by
-  # other Cinch plugins by means of including the
-  # Verbs module and defining routes.
-  class CinchHttpServer < Sinatra::Base
-
-    # When starting the server, we set this to the currently
-    # running Cinch::Bot instance.
-    def self.bot=(bot)
-      @bot = bot
-    end
-
-    # The currently running Cinch::Bot instance or +nil+ if
-    # it’s not available yet (i.e. the bot hasn’t been started
-    # yet).
-    def self.bot
-      @bot
-    end
-
-    # Shortcut for calling:
-    #   self.class.bot
-    def bot
-      self.class.bot
-    end
-
-  end
-
-  # Extend your plugins with this module to allow them
-  # to register routes to the HTTP server. You’ll get
-  # direct access to Sinatra’s ::get, ::put, ::post,
-  # ::patch, and ::delete methods.
-  module Verbs
-    extend Forwardable
-    delegate [:get, :put, :post, :patch, :delete, :before, :after] => CinchHttpServer
-  end
-
-  include Cinch::Plugin
-  listen_to :connect,    :method => :start_http_server
-  listen_to :disconnect, :method => :stop_http_server
-
-  def start_http_server(msg)
-    host    = config[:host]    || 'localhost'
-    port    = config[:port]    || 1234
-    logfile = config[:logfile] || :cinch
-
-    bot.info "Starting HTTP server on #{host} port #{port}"
-
-    # Set up thin with our Rack endpoint
-    @server = Thin::Server.new(host,
-                               port,
-                               CinchHttpServer,
-                               signals: false)
-
-    # If requested, iject our special rack-to-cinch logging
-    # adapter that makes Rack::CommonLogger log to Cinch’s
-    # registered loggers. We cannot add this middleware
-    # earlier, because we don’t have the requried Cinch::Bot
-    # instance ready prior to calling `start_http_server'.
-    if logfile == :cinch
-      @server.app.use(Rack::CommonLogger, CinchLogging.new(bot))
-    else
-      # Otherwise, just create a normal CommonLogger to store
-      # our HTTP request log in.
-      file = File.open(logfile.to_str, "a")
-      file.sync = true # Logs should never be buffered
-      @server.app.use(Rack::CommonLogger, file)
-    end
-
-    # Make the Cinch::Bot instance available inside the HTTP
-    # handlers.
-    @server.app.bot = bot
-
-    # Start the HTTP server!
-    @server.start
-  end
-
-  def stop_http_server(msg)
-    bot.info 'Halting HTTP server'
-    @server.stop!
-  end
-
 end

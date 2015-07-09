@@ -1,23 +1,26 @@
 require 'twitter'
+require 'rubybot/core/command_info'
 
 module Rubybot
   module Plugins
     class Tweet
       include Cinch::Plugin
 
-      listen_to :connect, method: :connected
-
-      def connected(_)
-        @twitter = Twitter::REST::Client.new do |config|
-          config.consumer_key = @bot.bot_config['twitter']['consumer_key']
-          config.consumer_secret = @bot.bot_config['twitter']['consumer_secret']
-          config.access_token = @bot.bot_config['twitter']['access_key']
-          config.access_token_secret = @bot.bot_config['twitter']['access_secret']
+      def initialize(bot)
+        super
+        @twitter = Twitter::REST::Client.new do |c|
+          c.consumer_key = config[:consumer_key]
+          c.consumer_secret = config[:consumer_secret]
+          c.access_token = config[:access_token]
+          c.access_token_secret = config[:access_token_secret]
         end
       end
 
+      def commands
+        [Rubybot::Core::CommandInfo.new('<tweet url>', 'Prints the contents of the given tweet', prefix: false)]
+      end
 
-      match /.*(https:\/\/twitter.com\/[^\/]+\/status\/[^\/]+)/, :use_prefix => false
+      match %r{.*(https://twitter.com/[^/]+/status/[^/]+)}, use_prefix: false
 
       def execute(m, uri)
         status = @twitter.status(URI(uri))

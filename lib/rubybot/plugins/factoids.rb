@@ -6,26 +6,27 @@ module Rubybot
   module Plugins
     class Factoids
       include Cinch::Plugin
-      
+
       def self.arg_regex
         /([^\s'"]*(?:"[^"]*"|'[^']*'|[^"'\s]+)[^\s'"]*)/
       end
-      
+
       def self.factoid_command_regex
         /([a-zA-Z]+)([^>]*)(?:\s*>\s*((?:[a-zA-Z]+)(?:[^>]*)))?/
       end
 
-      def initialize
-        @storage = Factoids::Storage.new
+      def initialize(bot)
+        super
+        @storage = Factoids::Storage.new config[:filename]
       end
 
       set prefix: '?'
-      match self.factoid_command_regex
-      match /\+([a-zA-Z]+).*/, method: :show
-      match /\*([a-zA-Z]+)(?: (.+))?/, method: :set
+      match factoid_command_regex
+      match(/\+([a-zA-Z]+).*/, method: :show)
+      match(/\*([a-zA-Z]+)(?: (.+))?/, method: :set)
 
       def set(msg, name, value = nil)
-        if @storage.reserved.key? name or Macros.macros.key? name
+        if @storage.reserved.key?(name) || Macros.macros.key?(name)
           msg.reply "#{msg.user.nick}: #{name} is reserved!"
         else
           if value.nil?
@@ -55,7 +56,7 @@ module Rubybot
       end
 
       def process(msg, prev, command, args, rest)
-        if prev.nil? and msg.channel
+        if prev.nil? && msg.channel
           prev = bot.logs.channel(msg.channel.name).to_a.reverse.first || ''
         end
         args_s = args.strip
@@ -66,8 +67,8 @@ module Rubybot
           resp = @storage.factoids[command]
         end
         res = Macros.process msg, resp, msg.user.nick, args, prev
-        if not rest.nil?
-          match = self.factoid_command_regex.match(rest).to_a.drop 1
+        if !rest.nil?
+          match = factoid_command_regex.match(rest).to_a.drop 1
           blob  = process msg, res, *match
         else
           blob = res

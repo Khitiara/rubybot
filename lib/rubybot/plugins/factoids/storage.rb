@@ -3,15 +3,15 @@ require 'json'
 
 module Rubybot
   module Plugins
-    module Factoids
+    class Factoids
       class Storage
-        def initialize
-          @factoid_filename = 'factoids.json'
+        def initialize(filename)
+          @factoid_filename = filename
           read
         end
 
         attr_reader :reserved, :user
-        
+
         def factoids
           @user.merge @reserved
         end
@@ -34,12 +34,12 @@ module Rubybot
 
         def save
           data = {
-              reserved: @reserved,
-              user:     @user
+            reserved: @reserved,
+            user:     @user
           }
-          File.write @factoid_filename, JSON.pretty_unparse data
+          File.write @factoid_filename, JSON.pretty_unparse(data)
         end
-        
+
         def read
           parsed = JSON.parse File.read @factoid_filename
           @reserved = parsed['reserved']

@@ -3,48 +3,30 @@ module Rubybot
     class Sed
       include Cinch::Plugin
       listen_to :channel
-      SED_REGEX = /^s\/(.+?)\/(.+?)(\/\S+|\/|$)/
+      SED_REGEX = %r{^s/(.+?)/(.+?)(/\S+|/|$)}
       match SED_REGEX, use_prefix: false
 
       def listen(m)
-        unless m.message =~ SED_REGEX
-          log_priv(m.user.nick, m.message) unless m.channel
-          log_chan(m.channel.name, m.user.nick, m.message) if m.channel
-        end
+        return if m.message =~ SED_REGEX || !m.channel
+        log m.channel.name, m.user.nick, m.message
       end
 
-      def log_priv(nick, message)
-        bot.logs.user(nick) << message
-      end
-
-      def log_chan(channel, nick, message)
-        bot.logs.channel(channel) << {:nick => nick, :message => message}
+      def log(channel, nick, message)
+        bot.logs.channel(channel) << { nick: nick, message: message }
       end
 
       def execute(m, matcher, replacement, conditional)
         regex = Regexp.new(matcher, conditional.include?('i'))
-        if m.channel
-          got = false
-          bot.logs.channel(m.channel).to_a.reverse.each { |msg|
-            if regex =~ msg[:message]
-              out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
-              m.reply("#{msg[:nick]}: #{out}")
-              got = true
-              break
-            end
-          }
-          m.reply("No match for '#{matcher}' in #{m.channel}!") unless got
-        else
-          got = false
-          bot.logs.user(m.user.nick).to_a.reverse.each { |msg|
-            if regex =~ msg
-              out = conditional.include?('g') ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
-              m.reply("#{m.user.nick}: #{out}")
-              got = true
-            end
-          }
-          m.reply("No match for '#{matcher}'!") unless got
+        is_global = conditional.include? 'g'
+        got = false
+        bot.logs.channel(m.channel).to_a.reverse_each do |msg|
+          next unless regex =~ msg[:message]
+          out = is_global ? msg[:message].gsub(regex, replacement) : msg[:message].sub(regex, replacement)
+          m.reply("#{msg[:nick]}: #{out}")
+          got = true
+          break
         end
+        m.reply("No match for '#{matcher}' in #{m.channel}!") unless got
       end
     end
   end

@@ -1,42 +1,33 @@
 require 'rubybot/core/acl'
 require 'rubybot/core/log_db'
-require 'rubybot/plugins/http_server/http_server'
+require 'rubybot/plugins/http_server'
 require 'timers'
 require 'active_support/time'
+require 'active_support/inflector'
 require 'cinch'
 require 'yajl'
+require 'pry'
 
 module Rubybot
   class Bot < Cinch::Bot
-    attr_accessor :bot_config
+    attr_reader :bot_config
     attr_reader :owner
     attr_reader :acl
     attr_accessor :logs
 
     def initialize(data = {})
-      super() do
-        @cfg_filename = data[:cfg_filename]
-        reload_conf
-        @timers = Timers::Group.new
-        @logs = Core::LogDb.new
-        @fix_nick = @timers.every(1.hours) do
-          @nick = @bot_config['bot']['nick']
-        end
-        configure do |c|
-          # noinspection RubyResolve
-          c.plugins.plugins = data[:plugins]
-
-          c.plugins.options[Cinch::HttpServer] = {
-              host: data[:http_host],
-              port: data[:http_port]
-          }
-        end
-
-        on :disconnected do
-          @fix_nick.cancel
-        end
+      super()
+      @cfg_filename = data[:cfg_filename]
+      reload_conf
+      @timers = Timers::Group.new
+      @logs = Core::LogDb.new
+      @fix_nick = @timers.every(1.hours) do
+        @nick = @bot_config[:bot][:nick]
       end
-      yield self if block_given?
+
+      on :disconnected do
+        @fix_nick.cancel
+      end
     end
 
     def save
@@ -46,25 +37,15 @@ module Rubybot
 
     def reload_conf
       @cfg_file   = File.read @cfg_filename
-      @bot_config = Yajl::Parser.parse(@cfg_file)
-      @owner      = @bot_config['owner']
+      @bot_config = Yajl::Parser.parse @cfg_file, symbolize_names: true
+      @owner      = @bot_config[:owner]
       @acl        = Rubybot::Core::Acl.new(self)
-      configure do |c|
-        @bot_config['bot'].each do |k, v|
-          segments = k.split('.')
-          object   = c
-          segments.each do |s|
-            # call the setter for the last segment on the previous segment's object
-            # or the main config object if there was only one segment
-            if s == segments.last
-              object.send s + '=', v
-              # for all segments but the last, call the getter and obtain a nested config object
-            else
-              object = c.send s
-            end
-          end
-        end
-      end
+
+      # load plugins
+      @bot_config[:bot][:plugins][:plugins].each { |clazz| require ActiveSupport::Inflector.underscore clazz }
+      @bot_config[:bot][:plugins][:options] =
+        Hash[@bot_config[:bot][:plugins][:options].map { |k, v| [ActiveSupport::Inflector.constantize(k.to_s), v] }]
+      config.load @bot_config[:bot]
     end
   end
 end

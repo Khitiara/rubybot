@@ -5,7 +5,7 @@ require 'rubybot/version'
 Gem::Specification.new do |spec|
   spec.name          = 'rubybot'
   spec.version       = Rubybot::VERSION
-  spec.authors       = ['robotbrain', '02JanDal']
+  spec.authors       = %w(robotbrain 02JanDal)
   spec.email         = ['robotbrain@robotbrain.info', '02jandal@gmail.com']
   spec.description   = <<DESC
 The ninth iteration of the ElrosBot project.
@@ -33,6 +33,16 @@ DESC
   spec.add_development_dependency 'bundler', '~> 1.3'
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'pry-nav'
+  spec.add_development_dependency 'pry-stack_explorer'
+  spec.add_development_dependency 'rubocop'
+  spec.add_development_dependency 'guard'
+  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rspec-collection_matchers'
+  spec.add_development_dependency 'guard-rspec'
+  spec.add_development_dependency 'guard-rubocop'
+  spec.add_development_dependency 'rubocop-rspec'
+  spec.add_development_dependency 'cinch-test'
   spec.add_dependency 'highline'
   spec.add_dependency 'cinch', '~>2.1.0'
   spec.add_dependency 'rack', '~>1.1'

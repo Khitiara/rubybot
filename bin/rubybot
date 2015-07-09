@@ -5,22 +5,7 @@ require 'cinch'
 require 'rubybot/bot'
 require 'json'
 
-bot = Rubybot::Bot.new(
-    {
-        cfg_filename: 'config.json',
-        http_host:    '0.0.0.0',
-        http_port:    4567,
-        plugins:      [#BotAdmin,
-                       #Factoids,
-                       #Sed,
-                       #Tweet,
-                       #Github,
-                       #PingLists,
-                       #Youtube,
-                       #GithubLinker,
-                       #Cinch::HttpServer
-                      ]
-    })
+bot = Rubybot::Bot.new cfg_filename: 'config.json'
 
 Signal.trap('TERM') { bot.quit }
 Signal.trap('HUP') { bot.reload_conf }
