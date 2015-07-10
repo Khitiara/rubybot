@@ -8,6 +8,8 @@ module Rubybot
     class Factoids
       include Cinch::Plugin
 
+      attr_reader :storage
+
       def self.arg_regex
         /([^\s'"]*(?:"[^"]*"|'[^']*'|[^"'\s]+)[^\s'"]*)/
       end
