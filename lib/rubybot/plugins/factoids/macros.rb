@@ -66,11 +66,11 @@ module Rubybot
             end
             CGI.escape args[0]
           end,
-          'list' => Macro.implement do |_, _, _, args, _|
+          'list' => Macro.implement do |m, _, _, args, _|
             unless args.length == 0
               fail MacroSemanticError, 'List macro takes no arguments!'
             end
-            message.bot.plugins.find { |p| p.class == RubyBot::Plugins::Factoids }.storage.factoids.keys.join(', ')
+            m.bot.plugins.find { |p| p.class == RubyBot::Plugins::Factoids }.storage.factoids.keys.join(', ')
           end,
           'wget' => Macro.implement do |_, _, _, args, _|
             unless args.length == 2
