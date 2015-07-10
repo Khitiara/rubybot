@@ -70,7 +70,7 @@ module Rubybot
             unless args.length == 0
               fail MacroSemanticError, 'List macro takes no arguments!'
             end
-            m.bot.plugins.find { |p| p.class == RubyBot::Plugins::Factoids }.storage.factoids.keys.join(', ')
+            m.bot.plugins.find { |p| p.class.plugin_name == 'factoids' }.storage.factoids.keys.join(', ')
           end,
           'wget' => Macro.implement do |_, _, _, args, _|
             unless args.length == 2
