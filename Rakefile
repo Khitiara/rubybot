@@ -15,7 +15,7 @@ task default: :spec
 namespace :rubybot do
   desc 'Runs the rubybot'
   task :run do
-    system 'bundle exec rubybot'
+    system 'bundle exec bin/rubybot'
   end
 
   desc 'Creates the config'
