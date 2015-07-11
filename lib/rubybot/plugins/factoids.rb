@@ -91,7 +91,7 @@ module Rubybot
         else
           resp = @storage.factoids[command]
           return if resp.nil?
-          res = Macros.process msg, resp, msg.user.nick, args_s, prev
+          res = Macros.process msg, resp, msg.user.nick, args_s.gsub('!!', prev), prev
         end
         if !rest.nil?
           match = Factoids.factoid_command_regex.match(rest).to_a.drop 1
