@@ -25,6 +25,7 @@ module Rubybot
       end
 
       def self.format_push_oneline(hash)
+        num  = hash[:commits].length
         message(hash[:repo], hash[:user],
                 "pushed #{num.to_s.format :green} commits to #{hash[:ref].slice(%r{^refs/heads/}).format :green}",
                 hash[:url])
