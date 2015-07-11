@@ -155,7 +155,7 @@ module Rubybot
           end
           macros.each do |k, _|
             namespace.send(:define_method, k) do |*a|
-              Macros.run(m, nick, k, Shellwords.join(a))
+              Macros.run(m, nick, k, Shellwords.join(a), args)
             end
           end
           ERB.new(resp).result(namespace.new.get_binding)
@@ -169,10 +169,10 @@ module Rubybot
           macros[a] = macros[n]
         end
 
-        def self.run(m, nick, name, macro_args_s)
+        def self.run(m, nick, name, macro_args_s, args = '')
           macro_args = Shellwords.split(macro_args_s)
           macro = macros[name]
-          args = Shellwords.split(macro_args_s)
+          args ||= macro_args
           macro.run(m, args, macro_args_s, macro_args, nick)
         end
 

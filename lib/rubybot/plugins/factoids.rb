@@ -72,7 +72,7 @@ module Rubybot
       end
 
       def execute(msg, command, args, rest)
-        res = process(msg, '', command, args, rest)
+        res = process(msg, nil, command, args, rest)
         return if res.nil?
         if res.start_with? '/me '
           msg.action_reply res[4..-1]
@@ -85,13 +85,13 @@ module Rubybot
         if prev.nil? && msg.channel
           prev = bot.logs(msg.channel.name).to_a.reverse.first || ''
         end
-        args_s = args.strip
+        args_s = args.strip.gsub('!!', prev)
         if Macros.macros.key? command
-          res = Macros.run(msg, msg.user.nick, command, args_s.gsub('!!', prev))
+          res = Macros.run(msg, msg.user.nick, command, args_s)
         else
           resp = @storage.factoids[command]
           return if resp.nil?
-          res = Macros.process msg, resp, msg.user.nick, args_s.gsub('!!', prev), prev
+          res = Macros.process msg, resp, msg.user.nick, args_s, prev
         end
         if !rest.nil?
           match = Factoids.factoid_command_regex.match(rest).to_a.drop 1
