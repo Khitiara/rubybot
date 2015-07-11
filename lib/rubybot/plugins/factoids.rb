@@ -85,7 +85,7 @@ module Rubybot
         if prev.nil? && msg.channel
           prev = bot.logs(msg.channel.name).to_a.reverse.first || ''
         end
-        args_s = args.strip.gsub('!!', prev)
+        args_s = args.strip.gsub('!!', prev).gsub('\n', "\n")
         if Macros.macros.key? command
           res = Macros.run(msg, msg.user.nick, command, args_s)
         else
