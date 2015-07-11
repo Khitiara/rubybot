@@ -9,7 +9,7 @@ end
 module Rubybot
   module Core
     class GithubMessageFormatter
-      def self.format(key, *hash)
+      def self.format(key, hash)
         send 'format_' + key.to_s, hash
       end
 
