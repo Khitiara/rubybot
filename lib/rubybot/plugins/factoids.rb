@@ -94,7 +94,7 @@ module Rubybot
           res = Macros.process msg, resp, msg.user.nick, args_s, prev
         end
         if !rest.nil?
-          match = factoid_command_regex.match(rest).to_a.drop 1
+          match = Factoids.factoid_command_regex.match(rest).to_a.drop 1
           blob = process msg, res, *match
         else
           blob = res
