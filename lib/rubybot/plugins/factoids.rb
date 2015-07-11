@@ -87,7 +87,7 @@ module Rubybot
         end
         args_s = args.strip
         if Macros.macros.key? command
-          res = Macros.run(m, nick, command, args_s)
+          res = Macros.run(msg, msg.user.nick, command, args_s)
         else
           resp = @storage.factoids[command]
           return if resp.nil?
