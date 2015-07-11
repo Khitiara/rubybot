@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'rubybot'
   spec.version       = Rubybot::VERSION
   spec.authors       = %w(robotbrain 02JanDal)
-  spec.email         = ['robotbrain@robotbrain.info', '02jandal@gmail.com']
+  spec.email         = %w(robotbrain@robotbrain.info 02jandal@gmail.com)
   spec.description   = <<DESC
 The ninth iteration of the ElrosBot project.
 
