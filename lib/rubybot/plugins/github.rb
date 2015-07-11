@@ -13,7 +13,6 @@ module Rubybot
 
       def initialize(bot)
         super
-        @repos = config[:repos]
       end
 
       KNOWN_EVENTS = [:pull_request, :review_comment, :push, :issues, :issue_comment, :create, :delete, :fork,
@@ -28,22 +27,23 @@ module Rubybot
       post '/gh-hook', agent: %r{GitHub-Hookshot/.*} do
         payload = @request_payload
         event   = request.env['HTTP_X_GITHUB_EVENT']
-        respond_for event, payload if KNOWN_EVENTS.include? event.to_sym
+        ::Rubybot::Plugins::Github.respond_for bot, event, payload if KNOWN_EVENTS.include? event.to_sym
         204
       end
 
       private
 
-      def respond_for(event, payload)
+      def self.respond_for(bot, event, payload)
+        return unless respond_to? 'respond_for_' + event
         response = send 'respond_for_' + event, payload
         return if response.nil?
 
-        channels(payload).each do |chan|
+        channels(bot, payload).each do |chan|
           [response].flatten.each { |row| chan.msg row }
         end
       end
 
-      def respond_for_pull_request(payload)
+      def self.respond_for_pull_request(payload)
         format 'pull_request',
                repo: payload[:repository][:name],
                user: payload[:sender][:login],
@@ -52,7 +52,7 @@ module Rubybot
                url: payload[:pull_request][:html_url]
       end
 
-      def respond_for_review_comment(payload)
+      def self.respond_for_review_comment(payload)
         format 'review_comment',
                repo: payload[:repository][:name],
                user: payload[:comment][:user][:login],
@@ -61,7 +61,7 @@ module Rubybot
                body: payload[:comment][:body]
       end
 
-      def respond_for_push(payload)
+      def self.respond_for_push(payload)
         format 'push',
                repo: payload[:repository][:name],
                user: payload[:sender][:login],
@@ -70,7 +70,7 @@ module Rubybot
                url: payload[:compare]
       end
 
-      def respond_for_issues(payload)
+      def self.respond_for_issues(payload)
         return if /(un)?labeled/ =~ payload[:action]
         format 'issues',
                repo: payload[:repository][:name],
@@ -81,7 +81,7 @@ module Rubybot
                url: payload[:issue][:html_url]
       end
 
-      def respond_for_issue_comment(payload)
+      def self.respond_for_issue_comment(payload)
         format 'issues',
                repo: payload[:repository][:name],
                user: payload[:comment][:user][:login],
@@ -92,7 +92,7 @@ module Rubybot
                body: payload[:comment][:body]
       end
 
-      def respond_for_create(payload)
+      def self.respond_for_create(payload)
         format 'create',
                repo: payload[:repository][:name],
                user: payload[:sender][:login],
@@ -101,7 +101,7 @@ module Rubybot
                url: payload[:repository][:html_url]
       end
 
-      def respond_for_delete(payload)
+      def self.respond_for_delete(payload)
         format 'delete',
                repo: payload[:repository][:name],
                user: payload[:sender][:login],
@@ -110,14 +110,14 @@ module Rubybot
                url: payload[:repository][:html_url]
       end
 
-      def respond_for_fork(payload)
+      def self.respond_for_fork(payload)
         format 'fork',
                repo: payload[:repository][:name],
                user: payload[:forkee][:owner][:login],
                url: payload[:forkee][:html_url]
       end
 
-      def respond_for_commit_comment(payload)
+      def self.respond_for_commit_comment(payload)
         format 'commit_comment',
                repo: payload[:repository][:name],
                user: payload[:comment][:user][:login],
@@ -126,7 +126,7 @@ module Rubybot
                body: payload[:comment][:body]
       end
 
-      def respond_for_status(payload)
+      def self.respond_for_status(payload)
         format 'status',
                repo: payload[:repository][:name],
                user: payload[:commit][:commit][:author][:name],
@@ -136,15 +136,16 @@ module Rubybot
                url: payload[:target_url]
       end
 
-      def format(event, hash)
+      def self.format(event, hash)
         Rubybot::Core::GithubMessageFormatter.format event, hash
       end
 
-      def channels(payload)
+      def self.channels(bot, payload)
         repo_owner = payload[:repository][:owner][:login] || payload[:repository][:owner][:name]
+        repos = bot.config.plugins.options[Rubybot::Plugins::Github][:repos]
         chans = []
-        chans += @repos[payload[:full_name]] if @repos.key? payload[:full_name]
-        chans += @repos["#{repo_owner}/"] if @repos.key? "#{repo_owner}/"
+        chans += repos[payload[:repository][:full_name].to_sym] if repos.key? payload[:repository][:full_name].to_sym
+        chans += repos["#{repo_owner}/"] if repos.key? "#{repo_owner}/".to_sym
         chans.map { |it| bot.channel_list.find it }
       end
     end
