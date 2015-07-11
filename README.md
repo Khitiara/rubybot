@@ -1,48 +1,16 @@
 # Rubybot
 
-The ninth iteration of the ElrosBot project.
+The ```{x | x > 9, x <- Z}```th iteration of elrosbot.
+This one is modular and here to stay!
+Credits to [02JanDal](https://github.com/02Jandal) for refactoring everything and [RX14](https://github.com/RX14) for the github linker plugin!
 
-## Installation
-
+#Installation
 Clone the repo
 
-## Usage
+Run ```bundle install``` to get the dependencies
 
-From within the project directory, run
+#Configuration
+Run ```rake rubybot:create_config``` and follow the prompts to generate a default config in config.json, then tweak it at will.
 
-`bundle exec ruby rubybot.rb`
-
-## Contributing
-
-1. Fork it ( https://github.com/robotbrain/rubybot/fork )
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
-
-## Example config file
-```json
-{
-  "bot": {
-    "server": "irc.esper.net",
-    "channels": [
-      "#example"
-    ],
-    "nick": "#######",
-    "realname": "#######",
-    "sasl.username": "######",
-    "sasl.password": "######",
-    "user": "ElrosGem"
-  },
-  "twitter": {
-    "consumer_key": "#######",
-    "consumer_secret": "########",
-    "access_key": "####-#######",
-    "access_secret": "########"
-  },
-  "github_repos": {
-    "user/repo": ["#example"]
-  }
-}
-}
-```
+#Running
+Run ```rake rubybot:run``` to start it up! It expects a config.json in the current directory.
