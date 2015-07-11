@@ -145,7 +145,7 @@ module Rubybot
         repos = bot.config.plugins.options[Rubybot::Plugins::Github][:repos]
         chans = []
         chans += repos[payload[:repository][:full_name].to_sym] if repos.key? payload[:repository][:full_name].to_sym
-        chans += repos["#{repo_owner}/"] if repos.key? "#{repo_owner}/".to_sym
+        chans += repos["#{repo_owner}/".to_sym] if repos.key? "#{repo_owner}/".to_sym
         chans.map { |it| bot.channel_list.find it }
       end
     end
