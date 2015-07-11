@@ -56,7 +56,7 @@ module Rubybot
         line = hash[:body].lines.first
         body = line[0, 400]
         body += '...' if line.length >= 400
-        body = '"' + body + '"'
+        body = '"' + body.strip + '"'
         [
           format_issues(hash.merge action: 'commented on'),
           body
@@ -76,9 +76,13 @@ module Rubybot
       end
 
       def self.format_commit_comment(hash)
+        line = hash[:body].lines.first
+        body = line[0, 400]
+        body += '...' if line.length >= 400
+        body = '"' + body.strip + '"'
         [
           message_item(hash[:repo], hash[:commit][0..7], hash[:user], 'commented', hash[:url]),
-          hash[:body].lines.first
+          body
         ]
       end
 
