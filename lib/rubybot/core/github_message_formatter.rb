@@ -50,9 +50,13 @@ module Rubybot
       end
 
       def self.format_issue_comment(hash)
+        line = hash[:body].lines.first
+        body = line[0, 400]
+        body += '...' if line.length >= 400
+        body = '"' + body + '"'
         [
           format_issues(hash.merge action: 'commented on'),
-          hash[:body].lines.first
+          body
         ]
       end
 
