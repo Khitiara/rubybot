@@ -57,8 +57,8 @@ module Rubybot
       private
 
       def aliases_for_channel(channel)
-        config[:repos][channel.to_sym].map do |repo, _aliazes|
-          repo # aliazes | [repo.to_s, repo.to_s.split('/')[1]]
+        config[:repos][channel.to_sym].map do |repo, aliazes|
+          [repo, aliazes, repo.to_s.split('/')[1]]
         end.flatten
       end
 
