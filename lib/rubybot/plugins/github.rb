@@ -82,7 +82,7 @@ module Rubybot
       end
 
       def self.respond_for_issue_comment(payload)
-        format 'issues',
+        format 'issue_comment',
                repo: payload[:repository][:name],
                user: payload[:comment][:user][:login],
                number: payload[:issue][:number],
