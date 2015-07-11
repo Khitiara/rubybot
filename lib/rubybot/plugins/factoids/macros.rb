@@ -1,14 +1,13 @@
 require 'rubybot/plugins/factoids/macro_semantic_error'
 require 'rubybot/plugins/factoids/macro'
+require 'shellwords'
+require 'ostruct'
+require 'erb'
 
 module Rubybot
   module Plugins
     class Factoids
       class Macros
-        def self.macro_regex
-          /\$\{(?<name>[a-zA-Z_]+)(\((?<args>.*)\))?}/
-        end
-
         class << self
           attr_accessor :macros
         end
@@ -47,12 +46,12 @@ module Rubybot
           def commands_for(plugin, channel)
             return [] unless plugin.respond_to? :commands
             case plugin.class.instance_method(:commands).arity
-            when 0
-              plugin.commands
-            when 1
-              plugin.commands channel
-            else
-              []
+              when 0
+                plugin.commands
+              when 1
+                plugin.commands channel
+              else
+                []
             end.each do |cmd|
               cmd.plugin = plugin
             end
@@ -60,91 +59,104 @@ module Rubybot
         end
 
         self.macros = {
-          'urlencode' => Macro.implement do |_, _, _, args, _|
-            unless args.length == 1
-              fail MacroSemanticError, 'Urlencode macro takes exactly one argument!'
-            end
-            CGI.escape args[0]
-          end,
-          'list' => Macro.implement do |m, _, _, args, _|
-            unless args.length == 0
-              fail MacroSemanticError, 'List macro takes no arguments!'
-            end
-            m.bot.plugins.find { |p| p.class.plugin_name == 'factoids' }.storage.factoids.keys.join(', ')
-          end,
-          'wget' => Macro.implement do |_, _, _, args, _|
-            unless args.length == 2
-              fail MacroSemanticError, 'Wget macro takes exactly two arguments!'
-            end
-            require 'net/http'
-            line_delim_extractor = /lines:'(?<delim>[^']+)'/
-
-            url = args[1]
-            res_format = args[0]
-
-            res = Net::HTTP.get_response(URI(url))
-            body = res.body
-            if (lines = line_delim_extractor.match(res_format))
-              delim = lines['delim']
-              body.split(/\n/).join(delim)
-            else
-              body
-            end
-          end,
-          'call' => Macro.implement do |_, _, _, args, nick|
-            unless args.length >= 1
-              fail MacroSemanticError, 'Arg macro takes at least one argument!'
-            end
-            name = args.shift
-            Macros.process(resp(name), nick, args.join(' ').scan(arg_regex).map { |it| it[0] })
-          end,
-          'selrand' => Macro.implement do |_, _, _, args, _|
-            unless args.length >= 1
-              fail MacroSemanticError, 'selrand macro takes at least one argument!'
-            end
-            args[rand(args.length)]
-          end,
-          'echo' => Macro.implement do |_, _, args, _, _|
-            args
-          end,
-          'roll' => Macro.implement do |_, _, args, _, nick|
-            blob = /(?:(?:(?'times'\d+)#)?(?'num'\d+))?d(?'sides'\d+)(?:(?'mod'[+-])(?'modnum'\d+))?/.match args
-            repeats = blob['times'].to_i || 1
-            rolls = blob['num'].to_i || 1
-            sides = blob['sides'].to_i
-            offset_op = blob['mod']
-            offset = blob['modnum']
-            repeats = 1 if repeats < 1
-            rolls = 1 if rolls < 1
-            total = 0
-            repeats.times do
-              rolls.times do
-                total += rand(sides.to_i) + 1
+            'urlencode' => Macro.implement do |_, _, a, _, _|
+              CGI.escape a
+            end,
+            'list' => Macro.implement do |m, _, _, args, _|
+              unless args.length == 0
+                fail MacroSemanticError, 'List macro takes no arguments!'
               end
-              total = total.send(offset_op, offset.to_i) if offset_op
-            end
+              m.bot.plugins.find { |p| p.class.plugin_name == 'factoids' }.storage.factoids.keys.join(', ')
+            end,
+            'wget' => Macro.implement do |_, _, _, args, _|
+              unless args.length == 1
+                fail MacroSemanticError, 'Wget macro takes exactly one arguments!'
+              end
+              require 'net/http'
 
-            "#{nick}: You rolled #{args} -> #{total}"
-          end,
-          'help' => HelpMacro.new
+              url = args[0]
+
+              res = Net::HTTP.get_response(URI(url))
+              res.body
+            end,
+            'splitjoin' => Macro.implement do |_, _, _, args, _|
+              fail MacroSemanticError, 'Call macro takes three arguments!' unless args.length == 3
+              split = args.shift
+              join = args.shift
+              blob = args.shift
+              blob.split(split).join(join)
+            end,
+            'call' => Macro.implement do |m, _, _, args, nick|
+              unless args.length >= 1
+                fail MacroSemanticError, 'Call macro takes at least one argument!'
+              end
+              name = args.shift
+              if Macros.macros.key? name
+                Macros.run(m, nick, name, Shellwords.join(args))
+              else
+                Macros.process(m, m.bot.plugins.find { |p| p.class.plugin_name == 'factoids' }.storage.factoids[name], nick, Shellwords.join(args))
+              end
+            end,
+            'selrand' => Macro.implement do |_, _, _, args, _|
+              unless args.length >= 1
+                fail MacroSemanticError, 'selrand macro takes at least one argument!'
+              end
+              args[rand(args.length)]
+            end,
+            'echo' => Macro.implement do |_, _, args, _, _|
+              args
+            end,
+            'roll' => Macro.implement do |_, _, args, _, nick|
+              blob = /(?:(?:(?'times'\d+)#)?(?'num'\d+))?d(?'sides'\d+)(?:(?'mod'[+-])(?'modnum'\d+))?/.match args
+              repeats = blob['times'].to_i || 1
+              rolls = blob['num'].to_i || 1
+              sides = blob['sides'].to_i
+              offset_op = blob['mod']
+              offset = blob['modnum']
+              repeats = 1 if repeats < 1
+              rolls = 1 if rolls < 1
+              total = 0
+              repeats.times do
+                rolls.times do
+                  total += rand(sides.to_i) + 1
+                end
+                total = total.send(offset_op, offset.to_i) if offset_op
+              end
+
+              "#{nick}: You rolled #{args} -> #{total}"
+            end,
+            'help' => HelpMacro.new
         }
 
         # noinspection RubyResolve
-        def self.process(m, resp, nick, args, rest)
-          resp = resp.gsub(/%ioru%/) { |_| args[0] || nick }
-          resp = resp.gsub(/%me%/, nick)
-          resp = resp.gsub(/%a(\d+)%/) do |_|
-            args[Integer(Regexp.last_match(1))]
+        def self.process(m, resp, nick, args_s, prev = '')
+          args = Shellwords.split args_s
+          namespace = Class.new do
+            def get_binding
+              binding
+            end
           end
-          resp = resp.gsub(/!!/, rest)
-          # Replace all macros
-          resp.gsub macro_regex do |_|
-            String name = Regexp.last_match(1)
-            macro_args_s = process(m, Regexp.last_match(2) || '', nick, args, rest)
-            Array macro_args = macro_args_s.scan(arg_regex).map { |it| it[0] } || []
-            macro = macros[name]
-            macro.run(m, args, macro_args_s, macro_args, nick)
+          namespace.send(:define_method, 'ioru') do
+            args.shift || nick
           end
+          namespace.send(:define_method, 'me') do
+            nick
+          end
+          namespace.send(:define_method, 'args') do
+            args
+          end
+          namespace.send(:define_method, 'args_s') do
+            args_s
+          end
+          namespace.send(:define_method, 'prev') do
+            prev
+          end
+          macros.each do |k, _|
+            namespace.send(:define_method, k) do |*a|
+              Macros.run(m, nick, k, Shellwords.join(a))
+            end
+          end
+          ERB.new(resp).result(namespace.new.get_binding)
         end
 
         def self.register(clazz, name = nil)
@@ -155,9 +167,14 @@ module Rubybot
           macros[a] = macros[n]
         end
 
-        def self.arg_regex
-          Rubybot::Plugins::Factoids.arg_regex
+        def self.run(m, nick, name, macro_args_s)
+          macro_args = Shellwords.split(macro_args_s)
+          macro = macros[name]
+          args = Shellwords.split(macro_args_s)
+          macro.run(m, args, macro_args_s, macro_args, nick)
         end
+
+        macro_alias('wget', 'curl')
       end
     end
   end
