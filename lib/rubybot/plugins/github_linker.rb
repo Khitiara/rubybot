@@ -72,6 +72,7 @@ module Rubybot
 
       def handle_issue_request(channel, issue_num, message, repo)
         return unless message.target.name == channel.to_s
+        return if message.user.name == message.bot.name
 
         cache_key = "#{repo}##{issue_num}"
         # prevent answering with the same issue multiple times
