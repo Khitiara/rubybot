@@ -48,6 +48,7 @@ module Rubybot
                repo: payload[:repository][:name],
                user: payload[:sender][:login],
                number: payload[:number],
+               action: payload[:action],
                title: payload[:pull_request][:title],
                url: payload[:pull_request][:html_url]
       end
