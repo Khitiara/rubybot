@@ -29,7 +29,7 @@ module Rubybot
           Rubybot::Core::CommandInfo.new('?*<name> [<definition>]',
                                          '(Re)defines the factoid, or undefines it if <definition> is empty'),
           Rubybot::Core::CommandInfo.new('?<name> [> <other name>]',
-                                         'Prints the factoid (or executes it, in the case of macros).')
+                                         'Evaluates the factoid (or executes it, in the case of macros).')
         ] | factoid_commands | macro_commands
       end
 

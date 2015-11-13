@@ -52,7 +52,6 @@ DESC
   spec.add_dependency 'yajl-ruby'
 
   # Plugin requirements
-  spec.add_dependency 'commander'
   spec.add_dependency 'git.io', '~> 0.0.3'
   spec.add_dependency 'googleajax'
   spec.add_dependency 'sanitize'

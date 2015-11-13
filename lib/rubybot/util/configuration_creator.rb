@@ -18,8 +18,9 @@ module Rubybot
 
         variables = { info: nil }
         if agree('Do you want to get help setting up your config? ')
+          variables[:owner] = ask 'Bot owner irc nick'
           variables[:info] = ask 'Information to display with help command: '
-          variables.merge!(query_irc).merge(query_twitter).merge(query_github).merge(query_youtube)
+          variables.merge!(query_irc).merge(query_http).merge(query_twitter).merge(query_github).merge(query_youtube)
         end
 
         Rubybot::Util::TemplateProcessor.process_file variables, 'config.json.template' => 'config.json'
@@ -100,6 +101,14 @@ module Rubybot
           end
         end
 
+        variables
+      end
+
+      def query_http
+        variables = {
+          port: 4567
+        }
+        variables[:port] = ask('Port (default 4567): ')
         variables
       end
     end

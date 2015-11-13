@@ -1,4 +1,3 @@
-require 'commander'
 require 'shellwords'
 require 'rubybot/core/command_info'
 
@@ -24,6 +23,10 @@ module Rubybot
       def execute(msg, command) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity
         return unless bot.acl.auth_or_fail(msg.channel, msg.user)
         args = Shellwords.split command
+        if args.length == 0
+          msg.channel.msg 'Missing command, try \'?help admin\' for a list of commands.'
+          return
+        end
         case (cmd = args.shift)
         when 'acl'
           case (acl_scmd = args.shift)
@@ -79,7 +82,7 @@ module Rubybot
             msg.channel.msg "Unkown factoid subcommand #{fac_scmd}"
           end
         else
-          msg.channel.msg "Unkown command #{cmd}"
+          msg.channel.msg "Unkown command #{cmd}, try '?help admin' for a list of commands"
         end
       end
     end
