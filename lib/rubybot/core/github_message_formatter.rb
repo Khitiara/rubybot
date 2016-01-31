@@ -99,7 +99,7 @@ module Rubybot
       end
 
       def self.message(repo, user, action, url)
-        "[#{repo.to_s.format :blue}]: #{user.to_s.format :orange} #{action}: #{Gitio.shorten url}"
+        "[#{repo.to_s.format :blue}]: #{user.to_s.format :orange} #{action}: #{url}"
       end
 
       def self.message_item(repo, item, user, action, url)
