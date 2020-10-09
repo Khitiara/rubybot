@@ -45,7 +45,7 @@ DESC
   spec.add_development_dependency 'cinch-test'
   spec.add_dependency 'highline'
   spec.add_dependency 'cinch', '~>2.1.0'
-  spec.add_dependency 'rack', '~>1.1'
+  spec.add_dependency 'rack', '>=1.1', '<3.0'
   spec.add_dependency 'timers', '~>4.0.1'
   spec.add_dependency 'activesupport'
   spec.add_dependency 'revolver', '~> 1.1.1'
